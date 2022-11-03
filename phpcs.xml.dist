@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<ruleset name="Ruleset for PHP MJML Renderer project">
+	<description>PHP MJML Renderer project coding standard ruleset</description>
+
+	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+
+	<!-- Additional arguments. -->
+	<arg value="sp"/>
+	<arg name="basepath" value="."/>
+	<arg name="parallel" value="8"/>
+	<arg name="extensions" value="php"/>
+
+	<file>.</file>
+
+	<!-- Check for PHP cross-version compatibility. -->
+	<config name="testVersion" value="7.4-"/>
+
+	<!-- Use PSR-12 ruleset: https://www.php-fig.org/psr/psr-12/ -->
+	<rule ref="PSR12"/>
+
+	<!-- Use tabs, not spaces. -->
+	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
+
+	<rule ref="Generic.WhiteSpace.DisallowTabIndent">
+		<exclude name="Generic.WhiteSpace.DisallowTabIndent.TabsUsed"/>
+	</rule>
+
+	<!-- Warn about lines longer than 120 chars, and never error. -->
+	<rule ref="Generic.Files.LineLength">
+		<properties>
+			<property name="ignoreComments" value="true"/>
+		</properties>
+	</rule>
+
+	<!-- Disallow array() syntax. Use [] instead. -->
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+
+	<!-- Disallow spacing inside arrays. -->
+	<rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
+
+	<!-- Remove extra spacing inside function declaration and call signature -->
+	<rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
+		<properties>
+			<property name="equalsSpacing" value="1"/>
+			<property name="requiredSpacesAfterOpen" value="0"/>
+			<property name="requiredSpacesBeforeClose" value="0"/>
+		</properties>
+	</rule>
+
+	<!-- Enforce camelCase -->
+	<rule ref="Squiz.NamingConventions.ValidVariableName"/>
+
+	<!-- Private methods MUST not be prefixed with an underscore -->
+	<rule ref="Squiz.NamingConventions.ValidFunctionName.PrivateNoUnderscore">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PSR2.Methods.MethodDeclaration.Underscore">
+		<type>error</type>
+	</rule>
+
+	<!-- Private properties MUST not be prefixed with an underscore -->
+	<rule ref="Squiz.NamingConventions.ValidVariableName.PrivateNoUnderscore">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
+		<type>error</type>
+	</rule>
+</ruleset>
