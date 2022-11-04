@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace MadeByDenis\PhpMjmlRenderer\Parser;
+namespace MadeByDenis\PhpMjmlRenderer;
 
 /**
  * Node interface
@@ -47,8 +47,6 @@ interface Node
 	/**
 	 * Get all attributes assigned to a current element
 	 *
-	 * To-do: could be attributes object?
-	 *
 	 * @return array<mixed>
 	 */
 	public function getAttributes(): array;
@@ -62,4 +60,13 @@ interface Node
 	 * @return Node[]|string
 	 */
 	public function getInnerContent();
+
+	/**
+	 * Get specific attribute for a current element
+	 *
+	 * @param string $attribute The name of the attribute whose value we want to retrieve.
+	 *
+	 * @return string
+	 */
+	public function getAttributeValue(string $attribute): string;
 }

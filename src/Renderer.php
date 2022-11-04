@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace MadeByDenis\PhpMjmlRenderer\Renderer;
+namespace MadeByDenis\PhpMjmlRenderer;
 
 /**
  * Render interface
