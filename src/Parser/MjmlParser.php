@@ -44,6 +44,11 @@ class MjmlParser implements Parser
 			}
 
 			if ($nodes instanceof \SimpleXMLElement && $nodes->count() === 0) {
+				// Check if tag is self-closing.
+				if (strpos($simpleXmlElement->asXML(), '/>') !== false) {
+					$collection['isSelfClosing'] = true;
+				}
+
 				$collection['value'] = trim((string) $simpleXmlElement); // should we trim?
 				return $collection;
 			}
