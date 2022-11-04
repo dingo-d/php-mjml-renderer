@@ -17,7 +17,7 @@ namespace MadeByDenis\PhpMjmlRenderer\Renderer;
  *
  * @since 1.0.0
  */
-interface RendererInterface
+interface Renderer
 {
 	/**
 	 * Renders MJML to HTML

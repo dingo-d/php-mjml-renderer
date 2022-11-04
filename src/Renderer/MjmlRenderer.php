@@ -22,7 +22,7 @@ namespace MadeByDenis\PhpMjmlRenderer\Renderer;
  *
  * @since 1.0.0
  */
-class MjmlRenderer implements RendererInterface
+class MjmlRenderer implements Renderer
 {
 	public function render(string $content): string
 	{
