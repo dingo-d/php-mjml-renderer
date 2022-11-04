@@ -69,4 +69,11 @@ interface Node
 	 * @return string
 	 */
 	public function getAttributeValue(string $attribute): string;
+
+	/**
+	 * Get children of the current node element
+	 *
+	 * @return Node
+	 */
+	public function getChildren(): Node;
 }

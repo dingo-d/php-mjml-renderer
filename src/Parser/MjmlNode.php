@@ -29,6 +29,7 @@ class MjmlNode implements Node
 	private array $attributes;
 	private string $content;
 	private bool $isSelfClosing;
+	private Node $children;
 
 	/**
 	 * @param string $tag
@@ -36,19 +37,22 @@ class MjmlNode implements Node
 	 * @param array<string, string> $attributes
 	 * @param string $content
 	 * @param bool $isSelfClosing
+	 * @param Node $children
 	 */
 	public function __construct(
 		string $tag,
 		string $tagName,
 		array $attributes,
 		string $content,
-		bool $isSelfClosing
+		bool $isSelfClosing,
+		Node $children
 	) {
 		$this->tag = $tag;
 		$this->tagName = $tagName;
 		$this->attributes = $attributes;
 		$this->content = $content;
 		$this->isSelfClosing = $isSelfClosing;
+		$this->$children = $children;
 	}
 
 	public function getTag(): string
@@ -82,5 +86,10 @@ class MjmlNode implements Node
 	public function getAttributeValue(string $attribute): string
 	{
 		return $this->attributes[$attribute] ?? '';
+	}
+
+	public function getChildren(): Node
+	{
+		return $this-$this->children;
 	}
 }
