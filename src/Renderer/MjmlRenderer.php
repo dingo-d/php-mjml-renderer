@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace MadeByDenis\PhpMjmlRenderer\Renderer;
 
+use MadeByDenis\PhpMjmlRenderer\Renderer;
+
 /**
  * Render class
  *
@@ -26,7 +28,8 @@ class MjmlRenderer implements Renderer
 {
 	public function render(string $content): string
 	{
-		// TO-DO: Implement rendering.
+		// Parse content.
+		// Render content based on nodes.
 		return $content;
 	}
 }
