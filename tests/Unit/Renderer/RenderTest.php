@@ -48,19 +48,3 @@ HTML;
 
 	expect($htmlOut)->toEqual($htmlExpected);
 })->skip();
-
-it('parses content', function () {
-	$mjml = <<<'MJML'
-<mjml>
-  <mj-body>
-    <mj-section>
-      <mj-column>
-        <mj-text>Hello world</mj-text>
-      </mj-column>
-    </mj-section>
-  </mj-body>
-</mjml>
-MJML;
-
-	// Parser - parse content and return what tag it is, then render content based on parsed content.
-});
