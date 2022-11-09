@@ -2,14 +2,40 @@
 
 namespace MadeByDenis\PhpMjmlRenderer\Tests\Unit\Parser;
 
+use MadeByDenis\PhpMjmlRenderer\Parser\MjmlNode;
+use MadeByDenis\PhpMjmlRenderer\ParserFactory;
+
 beforeEach(function () {
-    $this->parser = \MadeByDenis\PhpMjmlRenderer\ParserFactory::create();
+    $this->parser = ParserFactory::create();
 });
 
-it('parses content', function () {
+it('parses single element', function() {
+	$mjml = <<<'MJML'
+    <mj-text mj-class="blue big">
+      Hello World!
+    </mj-text>
+MJML;
+	$parsedContent = $this->parser->parse($mjml);
+
+	expect($parsedContent)->toEqualCanonicalizing(
+		[
+			new MjmlNode(
+				'mj-text',
+				[
+					'mj-class' => 'blue big',
+				],
+				'Hello World!',
+				false,
+				null
+			),
+		]
+	);
+});
+
+it('parses content with child elements', function () {
 	$mjml = <<<'MJML'
 <mjml>
-  <mj-head>
+  <mj-head background-color="#FFF">
     <mj-attributes>
       <mj-text padding="0" />
       <mj-class name="blue" color="blue" />
@@ -30,7 +56,105 @@ it('parses content', function () {
 MJML;
 
 	$parsedContent = $this->parser->parse($mjml);
-
-var_export($parsedContent);
-
+	expect($parsedContent)->toEqualCanonicalizing(
+		[
+			new MjmlNode(
+				'mjml',
+				null,
+				null,
+				false,
+				[
+					new MjmlNode(
+						'mj-head',
+						[
+							'background-color' => '#FFF',
+						],
+						null,
+						false,
+						[
+							new MjmlNode(
+								'mj-attributes',
+								null,
+								null,
+								false,
+								[
+									new MjmlNode(
+										'mj-text',
+										[
+											'padding' => '0',
+										],
+										null,
+										true,
+										null
+									),
+									new MjmlNode(
+										'mj-class',
+										[
+											'name' => 'blue',
+											'color' => 'blue',
+										],
+										null,
+										true,
+										null
+									),
+									new MjmlNode(
+										'mj-class',
+										[
+											'name' => 'big',
+											'font-size' => '20px',
+										],
+										null,
+										true,
+										null
+									),
+									new MjmlNode(
+										'mj-all',
+										[
+											'font-family' => 'Arial',
+										],
+										null,
+										true,
+										null
+									),
+								]
+							),
+						]
+					),
+					new MjmlNode(
+						'mj-body',
+						null,
+						null,
+						false,
+						[
+							new MjmlNode(
+								'mj-section',
+								null,
+								null,
+								false,
+								[
+									new MjmlNode(
+										'mj-column',
+										null,
+										null,
+										false,
+										[
+											new MjmlNode(
+												'mj-text',
+												[
+													'mj-class' => 'blue big'
+												],
+												'Hello World!',
+												false,
+												null,
+											),
+										]
+									),
+								]
+							),
+						]
+					),
+				]
+			),
+		]
+	);
 });
