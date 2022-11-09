@@ -29,15 +29,6 @@ interface Node
 	public function getTag(): string;
 
 	/**
-	 * Get the name of the current tag
-	 *
-	 * Example: column (for mj-column)
-	 *
-	 * @return string
-	 */
-	public function getTagName(): string;
-
-	/**
 	 * Check if the current tag is self closing or not
 	 *
 	 * @return bool
@@ -47,19 +38,16 @@ interface Node
 	/**
 	 * Get all attributes assigned to a current element
 	 *
-	 * @return array<mixed>
+	 * @return array<string, string>|null
 	 */
-	public function getAttributes(): array;
+	public function getAttributes(): ?array;
 
 	/**
 	 * Get the content of the element
 	 *
-	 * Could be a string in case there is just a string content,
-	 * or an array of node elements.
-	 *
-	 * @return Node[]|string
+	 * @return string|null
 	 */
-	public function getInnerContent();
+	public function getInnerContent(): ?string;
 
 	/**
 	 * Get specific attribute for a current element
@@ -73,7 +61,9 @@ interface Node
 	/**
 	 * Get children of the current node element
 	 *
-	 * @return Node
+	 * Returns an array of node elements, or null, in the case there are no children in the current node.
+	 *
+	 * @return Node[]|null
 	 */
-	public function getChildren(): Node;
+	public function getChildren(): ?array;
 }
