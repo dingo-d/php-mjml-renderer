@@ -19,50 +19,44 @@ use MadeByDenis\PhpMjmlRenderer\Node;
  *
  * @since 1.0.0
  */
-class MjmlNode implements Node
+final class MjmlNode implements Node
 {
 	private string $tag;
-	private string $tagName;
 	/**
-	 * @var array<string, string>
+	 * @var array<string, string>|null
 	 */
-	private array $attributes;
-	private string $content;
+	private ?array $attributes;
+	private ?string $content;
 	private bool $isSelfClosing;
-	private Node $children;
+	/**
+	 * @var Node[]|null
+	 */
+	private ?array $children;
 
 	/**
 	 * @param string $tag
-	 * @param string $tagName
-	 * @param array<string, string> $attributes
-	 * @param string $content
+	 * @param array<string, string>|null $attributes
+	 * @param string|null $content
 	 * @param bool $isSelfClosing
-	 * @param Node $children
+	 * @param Node[]|null $children
 	 */
 	public function __construct(
 		string $tag,
-		string $tagName,
-		array $attributes,
-		string $content,
+		?array $attributes,
+		?string $content,
 		bool $isSelfClosing,
-		Node $children
+		?array $children
 	) {
 		$this->tag = $tag;
-		$this->tagName = $tagName;
 		$this->attributes = $attributes;
 		$this->content = $content;
 		$this->isSelfClosing = $isSelfClosing;
-		$this->$children = $children;
+		$this->children = $children;
 	}
 
 	public function getTag(): string
 	{
 		return $this->tag;
-	}
-
-	public function getTagName(): string
-	{
-		return $this->tagName;
 	}
 
 	public function isSelfClosing(): bool
@@ -71,14 +65,14 @@ class MjmlNode implements Node
 	}
 
 	/**
-	 * @return array|mixed[]
+	 * @return array<string, string>|null
 	 */
-	public function getAttributes(): array
+	public function getAttributes(): ?array
 	{
 		return $this->attributes;
 	}
 
-	public function getInnerContent(): string
+	public function getInnerContent(): ?string
 	{
 		return $this->content;
 	}
@@ -88,8 +82,22 @@ class MjmlNode implements Node
 		return $this->attributes[$attribute] ?? '';
 	}
 
-	public function getChildren(): Node
+	/**
+	 * @return Node[]|null
+	 */
+	public function getChildren(): ?array
 	{
-		return $this-$this->children;
+		return $this->children;
+	}
+
+	/**
+	 * Set children of the current node
+	 *
+	 * @param Node[]|null $childNodes Array of child node element.
+	 * @return void
+	 */
+	public function setChildren(?array $childNodes): void
+	{
+		 $this->children = $childNodes;
 	}
 }
