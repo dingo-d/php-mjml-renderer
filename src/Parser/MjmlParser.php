@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace MadeByDenis\PhpMjmlRenderer\Parser;
 
+use MadeByDenis\PhpMjmlRenderer\Node;
 use MadeByDenis\PhpMjmlRenderer\Parser;
 
 /**
@@ -21,7 +22,7 @@ use MadeByDenis\PhpMjmlRenderer\Parser;
  *
  * @since 1.0.0
  */
-class MjmlParser implements Parser
+final class MjmlParser implements Parser
 {
 	public function parse(string $sourceCode)
 	{
@@ -33,41 +34,76 @@ class MjmlParser implements Parser
 			throw new \RuntimeException('Badly formatted MJML code.');
 		}
 
-		$parser = static function (\SimpleXMLElement $simpleXmlElement, array $collection = []) use (&$parser) {
-			$nodes = $simpleXmlElement->children();
-			$attributes = $simpleXmlElement->attributes() ?? [];
+		$parser = function (
+			\SimpleXMLElement $element,
+			?Node $parentNode = null,
+			?array $children = []
+		) use (&$parser) {
+			$attributes = $element->attributes();
 
-			if (count($attributes) !== 0) {
-				foreach ($attributes as $attrName => $attrValue) {
-					$collection['attributes'][$attrName] = strval($attrValue);
-				}
+			$parentNode = new MjmlNode(
+				$element->getName(),
+				!empty($attributes) ? ((array)$attributes)['@attributes'] : null,
+				null,
+				false,
+				null
+			);
+
+			// Single element.
+			if (count($element->children()) === 0) {
+				return $this->parseSingleElement($element);
 			}
 
-			if ($nodes instanceof \SimpleXMLElement && $nodes->count() === 0) {
-				// Check if tag is self-closing.
-				if (strpos($simpleXmlElement->asXML(), '/>') !== false) {
-					$collection['isSelfClosing'] = true;
-				}
+			foreach ($element as $nodeName => $nodeContent) {
+				$parentAttributes = $element->attributes();
 
-				$collection['value'] = trim((string) $simpleXmlElement); // should we trim?
-				return $collection;
-			}
+				$innerParentNode = new MjmlNode(
+					$nodeName,
+					!empty($parentAttributes) ? ((array)$parentAttributes)['@attributes'] : null,
+					null,
+					false,
+					null
+				);
 
-			foreach ($nodes as $nodeName => $nodeValue) {
-				$childrenNodes = $nodeValue->xpath('../' . $nodeName) ?? [];
-				if ($childrenNodes !== false && count($childrenNodes) < 2) {
-					$collection[$nodeName] = $parser($nodeValue);
+				if (count($nodeContent->children()) < 2) {
+					$children[$nodeName][] = $parser($nodeContent, $innerParentNode);
 					continue;
 				}
 
-				$collection[$nodeName][] = $parser($nodeValue);
+				$children[$nodeName][] = $parser($nodeContent, $innerParentNode);
 			}
 
-			return $collection;
+			unset($parentAttributes, $innerParentNode, $nodeName, $nodeContent);
+
+			$childrenFiltered = array_merge(...array_values($children ?? []));
+
+			$parentNode->setChildren($childrenFiltered);
+
+			return $parentNode;
 		};
 
-		return [
-			$simpleXmlElement->getName() => $parser($simpleXmlElement)
-		];
+		return [$parser($simpleXmlElement)];
+	}
+
+	private function parseSingleElement(\SimpleXMLElement $element): Node
+	{
+		$attributes = $element->attributes();
+		$xml = $element->asXML();
+
+		if (!empty($xml) && strpos($xml, '/>') !== false) {
+			$isSelfClosing = true;
+			$value = null;
+		} else {
+			$isSelfClosing = false;
+			$value = trim((string) $element); // should we trim?
+		}
+
+		return new MjmlNode(
+			$element->getName(),
+			!empty($attributes) ? ((array)$attributes)['@attributes'] : null,
+			$value,
+			$isSelfClosing,
+			null
+		);
 	}
 }
