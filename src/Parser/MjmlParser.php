@@ -27,7 +27,11 @@ final class MjmlParser implements Parser
 	public function parse(string $sourceCode)
 	{
 		// Parse the code.
-		$simpleXmlElement = \simplexml_load_string($sourceCode);
+		try {
+			$simpleXmlElement = \simplexml_load_string($sourceCode);
+		} catch (\Exception $exception) {
+			throw new \RuntimeException($exception->getMessage());
+		}
 
 		// Validate the source code.
 		if ($simpleXmlElement === false) {
