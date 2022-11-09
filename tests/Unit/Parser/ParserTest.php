@@ -9,6 +9,8 @@ beforeEach(function () {
     $this->parser = ParserFactory::create();
 });
 
+afterEach(fn() => $this->parser = null);
+
 it('parses single element', function() {
 	$mjml = <<<'MJML'
     <mj-text mj-class="blue big">
@@ -158,3 +160,12 @@ MJML;
 		]
 	);
 });
+
+it('thorows error on malformed MJML code', function () {
+	$mjml = <<<'MJML'
+    <mj-text mj
+      Hello World!
+    </mj-text>
+MJML;
+	$parsedContent = $this->parser->parse($mjml);
+})->expectExceptionMessage('simplexml_load_string(): Entity:');
