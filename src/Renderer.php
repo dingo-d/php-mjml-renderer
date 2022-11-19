@@ -10,14 +10,14 @@
 
 declare(strict_types=1);
 
-namespace MadeByDenis\PhpMjmlRenderer\Renderer;
+namespace MadeByDenis\PhpMjmlRenderer;
 
 /**
  * Render interface
  *
  * @since 1.0.0
  */
-interface RendererInterface
+interface Renderer
 {
 	/**
 	 * Renders MJML to HTML

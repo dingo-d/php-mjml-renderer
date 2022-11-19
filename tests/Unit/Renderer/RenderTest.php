@@ -9,7 +9,7 @@ beforeEach(function () {
 });
 
 it('renders the MJML to correct HTML version', function () {
-	$mjml = <<<MJML
+	$mjml = <<<'MJML'
 <mjml>
   <mj-body>
     <mj-section>
@@ -21,7 +21,7 @@ it('renders the MJML to correct HTML version', function () {
 </mjml>
 MJML;
 
-	$htmlExpected = <<<HTML
+	$htmlExpected = <<<'HTML'
 <!doctype html><html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head><title></title><!--[if !mso]><!--><meta http-equiv="X-UA-Compatible" content="IE=edge"><!--<![endif]--><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style type="text/css">#outlook a { padding:0; }
           body { margin:0;padding:0;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%; }
           table, td { border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt; }
