@@ -47,7 +47,9 @@ abstract class AbstractElement implements Element
 	public function getAllowedAttributeData(string $attributeName, string $attributeProperty = '')
 	{
 		if (!isset($this->allowedAttributes[$attributeName])) {
-			throw new \OutOfBoundsException("Attribute {$attributeName} doesn't exist in the allowed attributes array.");
+			throw new \OutOfBoundsException(
+				"Attribute {$attributeName} doesn't exist in the allowed attributes array."
+			);
 		}
 
 		if (empty($attributeProperty)) {
@@ -55,7 +57,9 @@ abstract class AbstractElement implements Element
 		}
 
 		if (!isset($this->allowedAttributes[$attributeName][$attributeProperty])) {
-			throw new \OutOfBoundsException("Property {$attributeProperty} doesn't exist in the  {$attributeName} allowed attribute array.");
+			throw new \OutOfBoundsException(
+				"Property {$attributeProperty} doesn't exist in the  {$attributeName} allowed attribute array."
+			);
 		}
 
 		return $this->allowedAttributes[$attributeName][$attributeProperty];
