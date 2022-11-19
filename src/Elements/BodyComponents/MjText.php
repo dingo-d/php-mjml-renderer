@@ -33,10 +33,25 @@ class MjText extends AbstractElement
 	 * @var array<string, array<string, string>>
 	 */
 	protected array $allowedAttributes = [
+		'align' => [
+			'unit' => 'string',
+			'description' => 'left/right/center/justify',
+			'default_value' => 'left',
+		],
 		'color' => [
 			'unit' => 'color',
 			'description' => 'text color',
 			'default_value' => '#000000',
+		],
+		'container-background-color' => [
+			'unit' => 'color',
+			'description' => 'inner element background color',
+			'default_value' => 'n/a',
+		],
+		'css-class' => [
+			'unit' => 'string',
+			'description' => 'class name, added to the root HTML element created',
+			'default_value' => 'n/a',
 		],
 		'font-family' => [
 			'unit' => 'string',
@@ -58,50 +73,25 @@ class MjText extends AbstractElement
 			'description' => 'text thickness',
 			'default_value' => 'n/a',
 		],
-		'line-height' => [
+		'height' => [
 			'unit' => 'px',
-			'description' => 'space between the lines',
-			'default_value' => '1',
+			'description' => 'The height of the element',
+			'default_value' => 'n/a',
 		],
 		'letter-spacing' => [
 			'unit' => 'px,em',
 			'description' => 'letter spacing',
 			'default_value' => 'none',
 		],
-		'height' => [
+		'line-height' => [
 			'unit' => 'px',
-			'description' => 'The height of the element',
-			'default_value' => 'n/a',
-		],
-		'text-decoration' => [
-			'unit' => 'string',
-			'description' => 'underline/overline/line-through/none',
-			'default_value' => 'n/a',
-		],
-		'text-transform' => [
-			'unit' => 'string',
-			'description' => 'uppercase/lowercase/capitalize',
-			'default_value' => 'n/a',
-		],
-		'align' => [
-			'unit' => 'string',
-			'description' => 'left/right/center/justify',
-			'default_value' => 'left',
-		],
-		'container-background-color' => [
-			'unit' => 'color',
-			'description' => 'inner element background color',
-			'default_value' => 'n/a',
+			'description' => 'space between the lines',
+			'default_value' => '1',
 		],
 		'padding' => [
 			'unit' => 'px',
 			'description' => 'supports up to 4 parameters',
 			'default_value' => '10px 25px',
-		],
-		'padding-top' => [
-			'unit' => 'px',
-			'description' => 'top offset',
-			'default_value' => 'n/a',
 		],
 		'padding-bottom' => [
 			'unit' => 'px',
@@ -118,9 +108,19 @@ class MjText extends AbstractElement
 			'description' => 'right offset',
 			'default_value' => 'n/a',
 		],
-		'css-class' => [
+		'padding-top' => [
+			'unit' => 'px',
+			'description' => 'top offset',
+			'default_value' => 'n/a',
+		],
+		'text-decoration' => [
 			'unit' => 'string',
-			'description' => 'class name, added to the root HTML element created',
+			'description' => 'underline/overline/line-through/none',
+			'default_value' => 'n/a',
+		],
+		'text-transform' => [
+			'unit' => 'string',
+			'description' => 'uppercase/lowercase/capitalize',
 			'default_value' => 'n/a',
 		],
 	];
