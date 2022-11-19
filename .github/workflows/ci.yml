@@ -48,6 +48,8 @@ jobs:
         uses: "ramsey/composer-install@v2"
         with:
           dependency-versions: "highest"
+          # Bust the cache at least once a month - output format: YYYY-MM-DD.
+          custom-cache-suffix: $(date -u -d "-0 month -$(($(date +%d)-1)) days" "+%F")
 
       - name: "Check source code for syntax errors"
         run: "composer exec -- parallel-lint src/ tests/"
@@ -70,6 +72,9 @@ jobs:
         include:
           - php: '8.2'
             allowed_failure: true
+        exclude:
+          - php: '8.1'
+            dependencies: "lowest" # Fails due to PHP parser error on a specific version.
     steps:
       - name: "Set up PHP"
         uses: "shivammathur/setup-php@v2"
@@ -84,6 +89,7 @@ jobs:
         uses: "ramsey/composer-install@v2"
         with:
           dependency-versions: "${{ matrix.dependencies }}"
+          custom-cache-suffix: $(date -u -d "-0 month -$(($(date +%d)-1)) days" "+%F")
 
       - name: "Execute unit tests"
         run: "composer run test:coverage"
@@ -132,6 +138,7 @@ jobs:
         uses: "ramsey/composer-install@v2"
         with:
           dependency-versions: "highest"
+          custom-cache-suffix: $(date -u -d "-0 month -$(($(date +%d)-1)) days" "+%F")
 
       - name: "Execute static analysis"
         run: "composer run test:types"
@@ -168,6 +175,7 @@ jobs:
         uses: "ramsey/composer-install@v2"
         with:
           dependency-versions: "highest"
+          custom-cache-suffix: $(date -u -d "-0 month -$(($(date +%d)-1)) days" "+%F")
 
       - name: "Check coding style"
         run: |
