@@ -24,7 +24,7 @@ use MadeByDenis\PhpMjmlRenderer\Parser;
  */
 final class MjmlParser implements Parser
 {
-	public function parse(string $sourceCode)
+	public function parse(string $sourceCode): Node
 	{
 		// Parse the code.
 		try {
@@ -86,7 +86,7 @@ final class MjmlParser implements Parser
 			return $parentNode;
 		};
 
-		return [$parser($simpleXmlElement)];
+		return $parser($simpleXmlElement);
 	}
 
 	private function parseSingleElement(\SimpleXMLElement $element): Node
@@ -99,7 +99,7 @@ final class MjmlParser implements Parser
 			$value = null;
 		} else {
 			$isSelfClosing = false;
-			$value = trim((string) $element); // should we trim?
+			$value = trim((string)$element); // should we trim?
 		}
 
 		return new MjmlNode(

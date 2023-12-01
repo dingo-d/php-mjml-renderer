@@ -98,6 +98,11 @@ final class MjmlNode implements Node
 	 */
 	public function setChildren(?array $childNodes): void
 	{
-		 $this->children = $childNodes;
+		$this->children = $childNodes;
+	}
+
+	public function hasChildren(): bool
+	{
+		return !empty($this->children);
 	}
 }
