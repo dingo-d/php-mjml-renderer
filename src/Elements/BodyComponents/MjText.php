@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace MadeByDenis\PhpMjmlRenderer\Elements\BodyComponents;
 
 use MadeByDenis\PhpMjmlRenderer\Elements\AbstractElement;
+use MadeByDenis\PhpMjmlRenderer\Elements\Helpers\ConditionalTag;
 
 /**
  * Mjml Text Element
@@ -23,7 +24,9 @@ use MadeByDenis\PhpMjmlRenderer\Elements\AbstractElement;
  */
 class MjText extends AbstractElement
 {
-	public const COMPONENT_NAME = 'mj-text';
+	use ConditionalTag;
+
+	public const TAG_NAME = 'mj-text';
 
 	public const ENDING_TAG = true;
 
@@ -125,18 +128,56 @@ class MjText extends AbstractElement
 		],
 	];
 
+	protected array $defaultAttributes = [
+		'align' => 'left',
+		'color' => '#000000',
+		'font-family' => 'Ubuntu, Helvetica, Arial, sans-serif',
+		'font-size' => '13px',
+		'line-height' => '1',
+		'padding' => '10px 25px',
+	];
+
 	public function render(): string
 	{
-		return '';
+		$height = $this->getAttribute('height');
+		$conditionalTagStart = $this->conditionalTag(
+			"<table role='presentation' border='0' cellpadding='0' cellspacing='0'><tr><td height='$height' style='vertical-align:top;height:$height;'>" // phpcs:ignore Generic.Files.LineLength.TooLong
+		);
+
+		$conditionalTagEnd = $this->conditionalTag('</td></tr></table>');
+
+		return $height ?
+			$conditionalTagStart . $this->renderContent() . $conditionalTagEnd :
+			$this->renderContent();
 	}
 
 	public function renderContent(): string
 	{
-		return '';
+		$htmlAttributes = $this->getHtmlAttributes([
+			'style' => 'text',
+		]);
+
+		$content = $this->getContent();
+
+		return "<div $htmlAttributes>$content</div>";
 	}
 
-	public function getStyles(): string
+	public function getStyles(): array
 	{
-		return '';
+		return [
+			'text' => [
+				'font-family' => $this->getAttribute('font-family'),
+				'font-size' => $this->getAttribute('font-size'),
+				'font-style' => $this->getAttribute('font-style'),
+				'font-weight' => $this->getAttribute('font-weight'),
+				'letter-spacing' => $this->getAttribute('letter-spacing'),
+				'line-height' => $this->getAttribute('line-height'),
+				'text-align' => $this->getAttribute('align'),
+				'text-decoration' => $this->getAttribute('text-decoration'),
+				'text-transform' => $this->getAttribute('text-transform'),
+				'color' => $this->getAttribute('color'),
+				'height' => $this->getAttribute('height'),
+			]
+		];
 	}
 }
