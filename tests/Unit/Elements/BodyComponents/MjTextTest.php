@@ -13,7 +13,7 @@ it('is ending tag', function () {
 });
 
 it('returns the correct component name', function () {
-	expect($this->element->getComponentName())->toBe('mj-text');
+	expect($this->element->getTagName())->toBe('mj-text');
 });
 
 it('returns the correct default attribute', function () {

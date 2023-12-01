@@ -17,8 +17,6 @@ beforeEach(function () {
 	);
 });
 
-afterEach(fn() => $this->node = null);
-
 it('will return the tag', function() {
 	expect($this->node->getTag())->toBe('mj-text');
 });

@@ -47,4 +47,4 @@ HTML;
 	$htmlOut = $this->renderer->render($mjml);
 
 	expect($htmlOut)->toEqual($htmlExpected);
-})->skip();
+});
