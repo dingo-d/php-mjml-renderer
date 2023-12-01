@@ -21,5 +21,5 @@ interface Element
 {
 	public function render(): string;
 	public function renderContent(): string;
-	public function getStyles(): string;
+	public function getStyles(): array;
 }
