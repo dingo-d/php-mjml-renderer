@@ -25,24 +25,41 @@ abstract class AbstractElement implements Element
 	public const ENDING_TAG = false;
 
 	protected bool $rawElement = false;
-	protected array $defaultAttributes = [];
-	protected array $allowedAttributes = [];
-	private array $attributes = [];
-	private array $children = [];
-	private array $properties = [];
-	private array $globalAttributes = [];
-	private string $context = '';
-	private string $content = '';
-	private ?string $absoluteFilePath = null;
 
-	public function __construct()
+	/**
+	 * @var array<string, string>
+	 */
+	protected array $defaultAttributes = [];
+
+	/**
+	 * @var array<string, array<string, string>>
+	 */
+	protected array $allowedAttributes = [];
+
+	/**
+	 * @var array<string, string>
+	 */
+	protected array $attributes = [];
+
+	protected array $children = [];
+
+	protected array $properties = [];
+
+	protected array $globalAttributes = [];
+
+	protected string $context = '';
+	protected string $content = '';
+	protected ?string $absoluteFilePath = null;
+
+	public function __construct(?array $attributes = [], ?string $content = null)
 	{
 		$this->attributes = $this->formatAttributes(
 			$this->defaultAttributes,
 			$this->allowedAttributes,
+			$attributes,
 		);
 
-		return $this;
+		$this->content = $content;
 	}
 
 	public function isEndingTag(): bool
@@ -96,9 +113,13 @@ abstract class AbstractElement implements Element
 		return $this->context;
 	}
 
+	/**
+	 * @param string $attributeName
+	 * @return mixed|null
+	 */
 	public function getAttribute(string $attributeName)
 	{
-		return $this->attributes[$attributeName];
+		return $this->attributes[$attributeName] ?? null;
 	}
 
 	protected function getContent(): string
@@ -106,29 +127,40 @@ abstract class AbstractElement implements Element
 		return trim($this->content);
 	}
 
-	protected function getHtmlAttributes(array $attributes): string
+	/**
+	 * @param array<string, string> $attributes
+	 *
+	 * @return string|null
+	 */
+	protected function getHtmlAttributes(array $attributes): ?string
 	{
+		// $style is fetched from the $attributes array.
+		// If it's not empty, it's passed to the $this->styles() method.
+		$style = $attributes['style'] ?? '';
+
 		$specialAttributes = [
-			'style' => fn($style) => $this->styles($style),
+			'style' => $this->styles($style),
 			'default' => $this->defaultAttributes,
 		];
 
 		$nonEmpty = array_filter($attributes, fn($element) => !empty($element));
 
-		array_walk($nonEmpty, function ($val, $key) use (&$attrOut, $specialAttributes) {
-			$value = (!empty($specialAttributes[$key]) ?
-				$specialAttributes[$key] :
-				$specialAttributes['default'])[$val];
+		$attrOut = '';
 
-			$attrOut .= " $key=\"$value\"";
+		array_walk($nonEmpty, function ($val, $key) use (&$attrOut, $specialAttributes) {
+			$value = !empty($specialAttributes[$key]) ?
+				$specialAttributes[$key] :
+				$specialAttributes['default'];
+
+			$attrOut .= "$key=\"$value\"";
 		});
 
-		return $attrOut;
+		return trim($attrOut);
 	}
 
 	abstract public function getStyles(): array;
 
-	protected function styles($styles)
+	protected function styles($styles): string
 	{
 		$stylesArray = [];
 
@@ -140,16 +172,18 @@ abstract class AbstractElement implements Element
 			}
 		}
 
+		$styles = '';
+
 		array_walk($stylesArray, function ($val, $key) use (&$styles) {
 			if (!empty($val)) {
-				$styles .= " $key=\"$val\"";
+				$styles .= "$key:$val;";
 			}
 		});
 
-		return $styles;
+		return trim($styles);
 	}
 
-	private function formatAttributes(array $attributes, array $allowedAttributes): array
+	private function formatAttributes(array $defaultAttributes, array $allowedAttributes, ?array $passedAttributes = []): array
 	{
 		/*
 		 * Check if the attributes are of the proper format based on the allowed attributes.
@@ -166,7 +200,47 @@ abstract class AbstractElement implements Element
 		 *     'text-padding' => '4px 4px 4px 0'
 		 * ]
 		 */
-		
-		return [];
+
+		// Check if the passedAttributes is empty or not, if it is, return the default attributes.
+		if (empty($passedAttributes)) {
+			return $defaultAttributes;
+		}
+
+		// 1. Check if the $passedAttributes are of the proper format based on the $allowedAttributes.
+
+		// 2. Check what attributes are the same in the $defaultAttributes and override them.
+		// 3. Return all the attributes.
+
+
+		$result = [];
+
+
+
+
+//
+//		foreach ($attributes as $attrName => $attrVal) {
+//			if ($allowedAttributes && isset($allowedAttributes[$attrName])) {
+//				$typeConfig = $allowedAttributes[$attrName];
+//				$TypeConstructor = initializeType($typeConfig);
+//
+//				if ($TypeConstructor) {
+//					$type = new $TypeConstructor($attrVal);
+//					$result[$attrName] = $type->getValue();
+//				}
+//			} else {
+//				$result[$attrName] = $attrVal;
+//			}
+//		}
+//
+//		return $result;
+//
+//
+//
+//
+//
+//
+//
+//
+//		return [];
 	}
 }
