@@ -162,6 +162,9 @@ class MjText extends AbstractElement
 		return "<div $htmlAttributes>$content</div>";
 	}
 
+	/**
+	 * @return array<string, array<string, string>>
+	 */
 	public function getStyles(): array
 	{
 		return [
