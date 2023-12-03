@@ -8,6 +8,7 @@ use MadeByDenis\PhpMjmlRenderer\Parser\MjmlParser;
 use MadeByDenis\PhpMjmlRenderer\Renderer\MjmlRenderer;
 use PHPUnit\Framework\TestCase;
 
+#[AllowDynamicProperties]
 class BaseTestCase extends TestCase
 {
 	private ?MjmlRenderer $renderer;
