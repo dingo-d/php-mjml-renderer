@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace MadeByDenis\PhpMjmlRenderer\Elements;
 
+use MadeByDenis\PhpMjmlRenderer\Validation\TypeValidator;
+
 /**
  * Mjml Text Element
  *
@@ -45,13 +47,36 @@ abstract class AbstractElement implements Element
 
 	protected array $properties = [];
 
-	protected array $globalAttributes = [];
+	protected array $globalAttributes = [
+		'backgroundColor' => '',
+		'beforeDoctype' => '',
+		'breakpoint' => '480px',
+		'classes' => [],
+		'classesDefault' => [],
+		'defaultAttributes' => [],
+		'htmlAttributes' => [],
+		'fonts' => '',
+		'inlineStyle' => [],
+		'headStyle' => [],
+		'componentsHeadStyle' => [],
+		'headRaw' => [],
+		'mediaQueries' => [],
+		'preview' => '',
+		'style' => [],
+		'title' => '',
+		'forceOWADesktop' => false,
+		'lang' => 'und',
+		'dir' => 'auto',
+	];
 
-	protected string $context = '';
+	/**
+	 * @var array<mixed, mixed>
+	 */
+	protected array $context = [];
 	protected string $content = '';
 	protected ?string $absoluteFilePath = null;
 
-	public function __construct(?array $attributes = [], ?string $content = null)
+	public function __construct(?array $attributes = [], string $content = '')
 	{
 		$this->attributes = $this->formatAttributes(
 			$this->defaultAttributes,
@@ -108,7 +133,7 @@ abstract class AbstractElement implements Element
 		return $this->allowedAttributes[$attributeName][$attributeProperty];
 	}
 
-	public function getChildContext(): string
+	public function getChildContext(): array
 	{
 		return $this->context;
 	}
@@ -121,6 +146,18 @@ abstract class AbstractElement implements Element
 	{
 		return $this->attributes[$attributeName] ?? null;
 	}
+
+	/**
+	 * Return the globally set attributes
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function getGlobalAttributes(): array
+	{
+		return $this->globalAttributes;
+	}
+
+	// To-do: Override the globally set attributes if we override some from the CLI or some options.
 
 	protected function getContent(): string
 	{
@@ -183,6 +220,64 @@ abstract class AbstractElement implements Element
 		return trim($styles);
 	}
 
+	protected function renderChildren($children, $options = []) {
+
+		$children = $children ?? $this->children;
+
+		//    const {
+//      props = {},
+//      renderer = component => component.render(),
+//      attributes = {},
+//      rawXML = false,
+//    } = options
+//
+//    children = children || this.props.children
+//
+//    if (rawXML) {
+//      return children.map(child => jsonToXML(child)).join('\n')
+//    }
+//
+//    const sibling = children.length
+//
+//    const rawComponents = filter(this.context.components, c => c.isRawElement())
+//    const nonRawSiblings = children.filter(
+//      child => !find(rawComponents, c => c.getTagName() === child.tagName),
+//    ).length
+//
+//    let output = ''
+//    let index = 0
+//
+//    forEach(children, children => {
+//      const component = initComponent({
+//        name: children.tagName,
+//        initialDatas: {
+//          ...children,
+//          attributes: {
+//            ...attributes,
+//            ...children.attributes,
+//          },
+//          context: this.getChildContext(),
+//          props: {
+//            ...props,
+//            first: index === 0,
+//            index,
+//            last: index + 1 === sibling,
+//            sibling,
+//            nonRawSiblings,
+//          },
+//        },
+//      })
+//
+//      if (component !== null) {
+//        output += renderer(component)
+//      }
+//
+//      index++ // eslint-disable-line no-plusplus
+//    })
+
+    return $output;
+  }
+
 	private function formatAttributes(array $defaultAttributes, array $allowedAttributes, ?array $passedAttributes = []): array
 	{
 		/*
@@ -207,40 +302,37 @@ abstract class AbstractElement implements Element
 		}
 
 		// 1. Check if the $passedAttributes are of the proper format based on the $allowedAttributes.
-
-		// 2. Check what attributes are the same in the $defaultAttributes and override them.
-		// 3. Return all the attributes.
-
-
 		$result = [];
 
+		// Append `mj-class` to the allowed attributes.
+		$allowedAttributes['mj-class'] = [
+			'unit' => 'string',
+			'description' => 'class name, added to the root HTML element created',
+			'default_value' => 'n/a',
+		];
 
+		foreach ($passedAttributes as $attrName => $attrVal) {
+			if (!isset($allowedAttributes[$attrName])) {
+				throw new \InvalidArgumentException(
+					"Attribute {$attrName} is not allowed."
+				);
+			}
 
+			$typeConfig = $allowedAttributes[$attrName];
+			$validator = new TypeValidator();
 
-//
-//		foreach ($attributes as $attrName => $attrVal) {
-//			if ($allowedAttributes && isset($allowedAttributes[$attrName])) {
-//				$typeConfig = $allowedAttributes[$attrName];
-//				$TypeConstructor = initializeType($typeConfig);
-//
-//				if ($TypeConstructor) {
-//					$type = new $TypeConstructor($attrVal);
-//					$result[$attrName] = $type->getValue();
-//				}
-//			} else {
-//				$result[$attrName] = $attrVal;
-//			}
-//		}
-//
-//		return $result;
-//
-//
-//
-//
-//
-//
-//
-//
-//		return [];
+			$typeValue = $typeConfig['type'];
+
+			if (!$validator->getValidator($typeValue)->isValid($validator, $attrVal)) {
+				throw new \InvalidArgumentException(
+					"Attribute {$attrName} must be of type {$typeValue}, {$attrVal} given."
+				);
+			}
+
+			$result[$attrName] = $attrVal;
+		}
+
+		// 2. Check what attributes are the same in the $defaultAttributes and override them, and return them.
+		return $result + $defaultAttributes;
 	}
 }
