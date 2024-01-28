@@ -20,6 +20,5 @@ namespace MadeByDenis\PhpMjmlRenderer\Elements;
 interface Element
 {
 	public function render(): string;
-	public function renderContent(): string;
 	public function getStyles(): array;
 }
