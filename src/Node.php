@@ -29,7 +29,7 @@ interface Node
 	public function getTag(): string;
 
 	/**
-	 * Check if the current tag is self closing or not
+	 * Check if the current tag is self-closing or not
 	 *
 	 * @return bool
 	 */
