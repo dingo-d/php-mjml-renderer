@@ -220,7 +220,8 @@ abstract class AbstractElement implements Element
 		return trim($styles);
 	}
 
-	protected function renderChildren($children, $options = []) {
+	protected function renderChildren($children, $options = [])
+	{
 
 		$children = $children ?? $this->children;
 
@@ -274,12 +275,14 @@ abstract class AbstractElement implements Element
 //
 //      index++ // eslint-disable-line no-plusplus
 //    })
+		return $output;
+	}
 
-    return $output;
-  }
-
-	private function formatAttributes(array $defaultAttributes, array $allowedAttributes, ?array $passedAttributes = []): array
-	{
+	private function formatAttributes(
+		array $defaultAttributes,
+		array $allowedAttributes,
+		?array $passedAttributes = []
+	): array {
 		/*
 		 * Check if the attributes are of the proper format based on the allowed attributes.
 		 * For instance, if you pass a non string value to the 'align' attribute, you should get an error.

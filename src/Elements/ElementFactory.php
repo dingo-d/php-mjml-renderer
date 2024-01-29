@@ -57,9 +57,9 @@ final class ElementFactory
 
 				// We can do this, because we are using PSR-4 convention.
 				$classFQN = 'MadeByDenis\\PhpMjmlRenderer\\Elements' . self::getElementClass(
-						__DIR__,
-						$fileInfo->getPathName()
-					);
+					__DIR__,
+					$fileInfo->getPathName()
+				);
 				$classNames[$classFQN::TAG_NAME] = $classFQN;
 			}
 		}
