@@ -74,3 +74,25 @@ it('Will correctly render the desired element with overridden attributes', funct
 
 	expect($out)->toBe('<div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#FF0000;">Hello World!</div>');
 });
+
+it('Will correctly throw exception if we are passing a non-existing type', function () {
+	$textNode = new MjmlNode(
+		'mj-text',
+		[
+			'colors' => '#FF0000 #000000',
+		],
+		'Hello World!',
+		false,
+		null,
+	);
+
+	$factory = new ElementFactory();
+
+	$mjTextElement = $factory->create($textNode);
+
+	expect($mjTextElement)->toBeInstanceOf(MjText::class);
+
+	$mjTextElement->render();
+})->throws(\InvalidArgumentException::class, 'Attribute colors is not allowed.');
+
+
