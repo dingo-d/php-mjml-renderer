@@ -20,6 +20,6 @@ interface Validator
 	public function isAlignment(string $value): bool;
 	public function isString(string $string): bool;
 	public function isFontStyle(string $value): bool;
-	public function isTextDirection(string $direction): bool;
+	public function isTextDecoration(string $decoration): bool;
 	public function isTextTransform(string $transform): bool;
 }
