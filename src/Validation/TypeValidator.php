@@ -174,6 +174,6 @@ class TypeValidator implements Validator
 			);
 		}
 
-		return new $validatorClassName();
+		return new $validatorClassName($this);
 	}
 }

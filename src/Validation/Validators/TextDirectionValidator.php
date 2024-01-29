@@ -7,10 +7,10 @@ namespace MadeByDenis\PhpMjmlRenderer\Validation\Validators;
 use MadeByDenis\PhpMjmlRenderer\Validation\Validatable;
 use MadeByDenis\PhpMjmlRenderer\Validation\Validator;
 
-class TextDirectionValidator implements Validatable
+class TextDirectionValidator extends BaseValidator
 {
-	public function isValid(Validator $validator, string $direction): bool
+	public function isValid(string $direction): bool
 	{
-		return $validator->isTextDirection($direction);
+		return $this->validator->isTextDirection($direction);
 	}
 }

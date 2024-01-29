@@ -7,10 +7,10 @@ namespace MadeByDenis\PhpMjmlRenderer\Validation\Validators;
 use MadeByDenis\PhpMjmlRenderer\Validation\Validatable;
 use MadeByDenis\PhpMjmlRenderer\Validation\Validator;
 
-class NumberValidator implements Validatable
+class NumberValidator extends BaseValidator
 {
-	public function isValid(Validator $validator, string $number): bool
+	public function isValid(string $number): bool
 	{
-		return $validator->isNumber($number);
+		return $this->validator->isNumber($number);
 	}
 }

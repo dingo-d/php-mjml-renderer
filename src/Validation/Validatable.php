@@ -6,5 +6,5 @@ namespace MadeByDenis\PhpMjmlRenderer\Validation;
 
 interface Validatable
 {
-	public function isValid(Validator $validator, string $input): bool;
+	public function isValid(string $input): bool;
 }

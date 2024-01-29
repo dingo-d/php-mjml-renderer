@@ -7,10 +7,10 @@ namespace MadeByDenis\PhpMjmlRenderer\Validation\Validators;
 use MadeByDenis\PhpMjmlRenderer\Validation\Validatable;
 use MadeByDenis\PhpMjmlRenderer\Validation\Validator;
 
-class ColorValidator implements Validatable
+class ColorValidator extends BaseValidator
 {
-	public function isValid(Validator $validator, string $color): bool
+	public function isValid(string $color): bool
 	{
-		return $validator->isValidColor($color);
+		return $this->validator->isValidColor($color);
 	}
 }
