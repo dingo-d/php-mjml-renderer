@@ -323,7 +323,7 @@ abstract class AbstractElement implements Element
 
 			$typeValue = $typeConfig['type'];
 
-			if (!$validator->getValidator($typeValue)->isValid($validator, $attrVal)) {
+			if (!$validator->getValidator($typeValue)->isValid($attrVal)) {
 				throw new \InvalidArgumentException(
 					"Attribute {$attrName} must be of type {$typeValue}, {$attrVal} given."
 				);
