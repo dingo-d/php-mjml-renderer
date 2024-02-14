@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace MadeByDenis\PhpMjmlRenderer\Renderer;
 
+use MadeByDenis\PhpMjmlRenderer\Elements\ElementFactory;
+use MadeByDenis\PhpMjmlRenderer\ParserFactory;
 use MadeByDenis\PhpMjmlRenderer\Renderer;
 
 /**
@@ -29,7 +31,28 @@ class MjmlRenderer implements Renderer
 	public function render(string $content): string
 	{
 		// Parse content.
-		// Render content based on nodes.
-		return $content;
+		$parser = ParserFactory::create();
+
+		$parsedContent = $parser->parse($content);
+
+		$contentRender = function ($nodeElement, $content) use (&$contentRender) {
+			if (!$nodeElement->hasChildren()) {
+				$content .= ElementFactory::create($nodeElement)->render();
+
+				return $content;
+			}
+
+			foreach ($nodeElement->getChildren() as $childNode) {
+				if ($childNode->hasChildren()) {
+					$contentRender($childNode, $content);
+				} else {
+					$content .= ElementFactory::create($childNode)->render();
+				}
+			}
+
+			return $content;
+		};
+
+		return $contentRender($parsedContent, '');
 	}
 }

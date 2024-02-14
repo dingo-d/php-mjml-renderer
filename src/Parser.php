@@ -24,7 +24,7 @@ interface Parser
 	 *
 	 * @param string $sourceCode The MJML source code to parse.
 	 *
-	 * @return Node[] Array of node objects with some details about the elements.
+	 * @return Node Node object with details about the elements.
 	 */
-	public function parse(string $sourceCode);
+	public function parse(string $sourceCode): Node;
 }
