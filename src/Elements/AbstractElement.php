@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace MadeByDenis\PhpMjmlRenderer\Elements;
 
+use MadeByDenis\PhpMjmlRenderer\Elements\Helpers\{BodyHelpers, CssClasses, JsonHelper};
 use MadeByDenis\PhpMjmlRenderer\Validation\TypeValidator;
 
 /**
@@ -23,6 +24,10 @@ use MadeByDenis\PhpMjmlRenderer\Validation\TypeValidator;
  */
 abstract class AbstractElement implements Element
 {
+	use JsonHelper;
+	use CssClasses;
+	use BodyHelpers;
+
 	public const TAG_NAME = '';
 	public const ENDING_TAG = false;
 
@@ -43,11 +48,18 @@ abstract class AbstractElement implements Element
 	 */
 	protected array $attributes = [];
 
-	protected array $children = [];
-
 	protected array $properties = [];
 
-	protected array $globalAttributes = [
+	protected ?array $children;
+
+	/**
+	 * @var array<mixed, mixed>
+	 */
+	protected array $context = [];
+	protected string $content = '';
+	protected ?string $absoluteFilePath = null;
+
+	private array $globalAttributes = [
 		'backgroundColor' => '',
 		'beforeDoctype' => '',
 		'breakpoint' => '480px',
@@ -69,14 +81,7 @@ abstract class AbstractElement implements Element
 		'dir' => 'auto',
 	];
 
-	/**
-	 * @var array<mixed, mixed>
-	 */
-	protected array $context = [];
-	protected string $content = '';
-	protected ?string $absoluteFilePath = null;
-
-	public function __construct(?array $attributes = [], string $content = '')
+	public function __construct(?array $attributes = [], string $content = '', ?array $childNodes = [])
 	{
 		$this->attributes = $this->formatAttributes(
 			$this->defaultAttributes,
@@ -85,6 +90,7 @@ abstract class AbstractElement implements Element
 		);
 
 		$this->content = $content;
+		$this->children = $childNodes;
 	}
 
 	public function isEndingTag(): bool
@@ -110,9 +116,8 @@ abstract class AbstractElement implements Element
 	 *
 	 * @return array<string, string>|string Array of properties in case the specific property is empty, property value if not.
 	 *
-	 * @throws \OutOfBoundsException In case attribute name is wrong or property doesn't exist.
 	 */
-	public function getAllowedAttributeData(string $attributeName, string $attributeProperty = '')
+	public function getAllowedAttributeData(string $attributeName, string $attributeProperty = ''): array | string
 	{
 		if (!isset($this->allowedAttributes[$attributeName])) {
 			throw new \OutOfBoundsException(
@@ -142,7 +147,7 @@ abstract class AbstractElement implements Element
 	 * @param string $attributeName
 	 * @return mixed|null
 	 */
-	public function getAttribute(string $attributeName)
+	public function getAttribute(string $attributeName): mixed
 	{
 		return $this->attributes[$attributeName] ?? null;
 	}
@@ -157,7 +162,17 @@ abstract class AbstractElement implements Element
 		return $this->globalAttributes;
 	}
 
+	public function setGlobalAttributes($attribute, $value): void
+	{
+		$this->globalAttributes[$attribute] = $value;
+	}
+
 	// To-do: Override the globally set attributes if we override some from the CLI or some options.
+
+	protected function getChildren(): ?array
+	{
+		return $this->children;
+	}
 
 	protected function getContent(): string
 	{
@@ -180,6 +195,9 @@ abstract class AbstractElement implements Element
 			'default' => $this->defaultAttributes,
 		];
 
+		// Remove numerical keys from the array.
+		$attributes = array_filter($attributes, fn($key) => !is_numeric($key), ARRAY_FILTER_USE_KEY);
+
 		$nonEmpty = array_filter($attributes, fn($element) => !empty($element));
 
 		$attrOut = '';
@@ -188,6 +206,12 @@ abstract class AbstractElement implements Element
 			$value = !empty($specialAttributes[$key]) ?
 				$specialAttributes[$key] :
 				$specialAttributes['default'];
+
+			if (is_array($value)) {
+				$value = implode('; ', array_map(function ($val, $key) {
+					return "$key: $val";
+				}, $value, array_keys($value)));
+			}
 
 			$attrOut .= "$key=\"$value\"";
 		});
@@ -213,6 +237,11 @@ abstract class AbstractElement implements Element
 
 		array_walk($stylesArray, function ($val, $key) use (&$styles) {
 			if (!empty($val)) {
+
+				if (is_array($val)) {
+					$val = implode(' ', $val);
+				}
+
 				$styles .= "$key:$val;";
 			}
 		});
@@ -220,62 +249,95 @@ abstract class AbstractElement implements Element
 		return trim($styles);
 	}
 
-	protected function renderChildren($children, $options = [])
+	protected function getShorthandAttrValue($attribute, $direction): int
 	{
+		$mjAttributeDirection = $this->getAttribute("$attribute-$direction");
+		$mjAttribute = $this->getAttribute($attribute);
 
+		if ($mjAttributeDirection) {
+			return (int)$mjAttributeDirection;
+		}
+
+		if (!$mjAttribute) {
+			return 0;
+		}
+
+		return $this->shorthandParser($mjAttribute, $direction);
+	}
+
+	protected function getShorthandBorderValue($direction, $attribute = 'border'): int
+	{
+		$borderDirection = $direction && $this->getAttribute("$attribute-$direction");
+		$border = $this->getAttribute($attribute);
+
+		return $this->borderParser($borderDirection || $border || '0');
+	}
+
+	protected function renderChildren($children, $options = []): string
+	{
 		$children = $children ?? $this->children;
 
-		//    const {
-//      props = {},
-//      renderer = component => component.render(),
-//      attributes = {},
-//      rawXML = false,
-//    } = options
-//
-//    children = children || this.props.children
-//
-//    if (rawXML) {
-//      return children.map(child => jsonToXML(child)).join('\n')
-//    }
-//
-//    const sibling = children.length
-//
-//    const rawComponents = filter(this.context.components, c => c.isRawElement())
-//    const nonRawSiblings = children.filter(
-//      child => !find(rawComponents, c => c.getTagName() === child.tagName),
-//    ).length
-//
-//    let output = ''
-//    let index = 0
-//
-//    forEach(children, children => {
-//      const component = initComponent({
-//        name: children.tagName,
-//        initialDatas: {
-//          ...children,
-//          attributes: {
-//            ...attributes,
-//            ...children.attributes,
-//          },
-//          context: this.getChildContext(),
-//          props: {
-//            ...props,
-//            first: index === 0,
-//            index,
-//            last: index + 1 === sibling,
-//            sibling,
-//            nonRawSiblings,
-//          },
-//        },
-//      })
-//
-//      if (component !== null) {
-//        output += renderer(component)
-//      }
-//
-//      index++ // eslint-disable-line no-plusplus
-//    })
+		if ($this->isRawElement()) {
+			return implode("\n", array_map(function ($child) {
+				return $this->jsonToXML($child);
+			}, $children));
+		}
+
+		$output = '';
+
+		foreach ($children as $child) {
+			// Render child components.
+			$output .= ElementFactory::create($child)->render();
+		}
+
 		return $output;
+	}
+
+	protected function getBoxWidths(): array
+	{
+
+		['containerWidth' => $containerWidth] = $this->context;
+
+		$parsedWidth = (int)$containerWidth;
+
+		$paddings =
+			$this->getShorthandAttrValue('padding', 'right') .
+			$this->getShorthandAttrValue('padding', 'left');
+
+		$borders =
+			$this->getShorthandBorderValue('right') .
+			$this->getShorthandBorderValue('left');
+
+		return [
+			'totalWidth' => $parsedWidth,
+			'borders' => $borders,
+			'paddings' => $paddings,
+			'box' => $parsedWidth - $paddings - $borders,
+		];
+	}
+
+	protected function widthParser($width, $options = []): array
+	{
+		$defaultOptions = [
+			'parseFloatToInt' => true,
+		];
+
+		$options = $defaultOptions + $options;
+
+		$widthUnit = preg_match('/[\d.,]*(\D*)$/', $width, $matches) ? $matches[1] : 'px';
+
+		$unitParsers = [
+			'default' => 'intval',
+			'px' => 'intval',
+			'%' => $options['parseFloatToInt'] ? 'intval' : 'floatval',
+		];
+
+		$parser = $unitParsers[$widthUnit] ?? $unitParsers['default'];
+
+		return [
+			'parsedWidth' => $parser($width),
+			'unit' => $widthUnit,
+		];
 	}
 
 	private function formatAttributes(
@@ -337,5 +399,34 @@ abstract class AbstractElement implements Element
 
 		// 2. Check what attributes are the same in the $defaultAttributes and override them, and return them.
 		return $result + $defaultAttributes;
+	}
+
+	private function shortHandParser($cssValue, $direction): int
+	{
+		// Convert to PHP.
+		$splittedCssValue = preg_split('/\s+/', trim($cssValue), 4);
+
+		switch (count($splittedCssValue)) {
+			case 2:
+				$directions = ['top' => 0, 'bottom' => 0, 'left' => 1, 'right' => 1];
+				break;
+			case 3:
+				$directions = ['top' => 0, 'left' => 1, 'right' => 1, 'bottom' => 2];
+				break;
+			case 4:
+				$directions = ['top' => 0, 'right' => 1, 'bottom' => 2, 'left' => 3];
+				break;
+			case 1:
+			default:
+				return (int)$cssValue;
+		}
+
+		return (int)$splittedCssValue[$directions[$direction]] ?? 0;
+	}
+
+	private function borderParser($border): int
+	{
+		preg_match('/(?:^| )(\d+)/', $border, $matches);
+		return isset($matches[1]) ? (int)$matches[1] : 0;
 	}
 }
