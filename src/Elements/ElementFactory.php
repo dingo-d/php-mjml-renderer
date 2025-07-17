@@ -34,9 +34,10 @@ final class ElementFactory
 		$tag = self::$node->getTag();
 		$class = self::getTagClass($tag);
 		$attributes = $node->getAttributes();
-		$content = $node->getInnerContent();
+		$content = $node->getInnerContent() ?? '';
+		$children = $node->getChildren() ?? [];
 
-		return new $class($attributes, $content); // phpcs:ignore PSR12.Classes.ClassInstantiation.MissingParentheses
+		return new $class($attributes, $content, $children); // phpcs:ignore PSR12.Classes.ClassInstantiation.MissingParentheses
 	}
 
 	private static function getTagClass(string $tag): string
