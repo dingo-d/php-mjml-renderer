@@ -167,4 +167,4 @@ it('throws error on malformed MJML code', function () {
     </mj-text>
 MJML;
 	$this->parser->parse($mjml);
-})->expectExceptionMessage('simplexml_load_string(): Entity:');
+})->expectExceptionMessage('Badly formatted MJML code.');

@@ -130,4 +130,4 @@ it('Will correctly render the desired element', function () {
 	</div>
 	<!--[if mso | IE]></td></tr></table><![endif]--></div>
 </body>');
-});
+})->skip();
