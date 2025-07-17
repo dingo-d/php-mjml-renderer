@@ -40,7 +40,7 @@ class MjBody extends AbstractElement
 			'unit' => 'color',
 			'type' => 'color',
 			'description' => 'body background color',
-			'default_value' => 'n/a',
+			'default_value' => '#FFFFFF',
 		],
 		'width' => [
 			'unit' => 'px',
@@ -56,10 +56,11 @@ class MjBody extends AbstractElement
 
 	public function render(): string
 	{
-		$context = $this->getContext(); // To be set with the bg color setter.
+		$this->setBackgroundColor($this->getAttribute('background-color'));
 
 		// Fetch from globals.
 		$globalData = $this->getGlobalAttributes();
+
 		$lang = $globalData['lang'];
 		$dir = $globalData['dir'];
 
@@ -70,9 +71,9 @@ class MjBody extends AbstractElement
 			$dir,
 		]);
 
-		// Set bg color.
+		$children = $this->getChildren();
 
-		$content = $this->renderChildren();
+		$content = $this->renderChildren($children);
 
 		return "<div $htmlAttributes>$content</div>";
 	}
