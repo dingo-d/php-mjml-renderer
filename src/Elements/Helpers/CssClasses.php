@@ -11,6 +11,6 @@ trait CssClasses
 		return $classes ?
 			implode(' ', array_map(function ($className) use ($suffix) {
 				return $className . '-' . $suffix;
-		}, explode(' ', $classes))) : '';
+			}, explode(' ', $classes))) : '';
 	}
 }

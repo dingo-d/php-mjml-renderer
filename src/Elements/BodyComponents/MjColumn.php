@@ -206,7 +206,10 @@ class MjColumn extends AbstractElement
 			return !$child->isRawElement();
 		}));
 
-		$innerBorders = $this->getShorthandBorderValue('left', 'inner-border') . $this->getShorthandBorderValue('right', 'inner-border');
+		$innerBorders = $this->getShorthandBorderValue('left', 'inner-border') . $this->getShorthandBorderValue(
+			'right',
+			'inner-border'
+		);
 
 		$containerWidth = (float)$parentWidth / $nonRawSiblings;
 		$containerWidth = $this->getAttribute('width') ?? "{$containerWidth}px";
@@ -329,7 +332,7 @@ class MjColumn extends AbstractElement
 
 		$content = $this->renderChildren($children, []);
 
-	    return "<table $tableAttributes>
+		return "<table $tableAttributes>
 			<tbody>
 				$content
 			</tbody>

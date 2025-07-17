@@ -237,7 +237,6 @@ abstract class AbstractElement implements Element
 
 		array_walk($stylesArray, function ($val, $key) use (&$styles) {
 			if (!empty($val)) {
-
 				if (is_array($val)) {
 					$val = implode(' ', $val);
 				}
