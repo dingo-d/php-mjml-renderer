@@ -180,6 +180,11 @@ class TypeValidator implements Validator
 		return isset($this->allowedTextTransform[$transform]);
 	}
 
+	public function isTextDirection(string $direction): bool
+	{
+		return in_array($direction, ['ltr', 'rtl'], true);
+	}
+
 	public function getValidator(string $validatorType): Validatable
 	{
 		$validatorClassName = __NAMESPACE__ . '\\Validators\\' . ucwords($validatorType) . 'Validator';
