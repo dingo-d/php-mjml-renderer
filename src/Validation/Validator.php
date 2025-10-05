@@ -22,4 +22,5 @@ interface Validator
 	public function isFontStyle(string $value): bool;
 	public function isTextDecoration(string $decoration): bool;
 	public function isTextTransform(string $transform): bool;
+	public function isTextDirection(string $direction): bool;
 }
