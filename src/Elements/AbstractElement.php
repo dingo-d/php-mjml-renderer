@@ -90,12 +90,16 @@ abstract class AbstractElement implements Element
 		'dir' => 'auto',
 	];
 
+	/**
+	 * @param array<string, string>|null $attributes
+	 * @param array<int, \MadeByDenis\PhpMjmlRenderer\Node>|null $childNodes
+	 */
 	public function __construct(?array $attributes = [], string $content = '', ?array $childNodes = [])
 	{
 		$this->attributes = $this->formatAttributes(
 			$this->defaultAttributes,
 			$this->allowedAttributes,
-			$attributes,
+			$attributes ?? [],
 		);
 
 		$this->content = $content;
@@ -351,10 +355,16 @@ abstract class AbstractElement implements Element
 		];
 	}
 
+	/**
+	 * @param array<string, string> $defaultAttributes
+	 * @param array<string, array<string, string>> $allowedAttributes
+	 * @param array<string, string> $passedAttributes
+	 * @return array<string, string>
+	 */
 	private function formatAttributes(
 		array $defaultAttributes,
 		array $allowedAttributes,
-		?array $passedAttributes = []
+		array $passedAttributes = []
 	): array {
 		/*
 		 * Check if the attributes are of the proper format based on the allowed attributes.
