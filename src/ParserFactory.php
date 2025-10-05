@@ -31,6 +31,7 @@ final class ParserFactory
 	 */
 	public static function create(): Parser
 	{
+		/** @var Parser|null $instance */
 		static $instance = null;
 
 		if ($instance === null) {

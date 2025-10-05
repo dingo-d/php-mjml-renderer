@@ -147,6 +147,9 @@ abstract class AbstractElement implements Element
 		return $this->allowedAttributes[$attributeName][$attributeProperty];
 	}
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function getChildContext(): array
 	{
 		return $this->context;
@@ -171,7 +174,7 @@ abstract class AbstractElement implements Element
 		return $this->globalAttributes;
 	}
 
-	public function setGlobalAttributes($attribute, $value): void
+	public function setGlobalAttributes(string $attribute, mixed $value): void
 	{
 		$this->globalAttributes[$attribute] = $value;
 	}
