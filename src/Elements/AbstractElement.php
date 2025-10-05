@@ -48,17 +48,26 @@ abstract class AbstractElement implements Element
 	 */
 	protected array $attributes = [];
 
+	/**
+	 * @var array<string, mixed>
+	 */
 	protected array $properties = [];
 
+	/**
+	 * @var array<int, \MadeByDenis\PhpMjmlRenderer\Node>|null
+	 */
 	protected ?array $children;
 
 	/**
-	 * @var array<mixed, mixed>
+	 * @var array<string, mixed>
 	 */
 	protected array $context = [];
 	protected string $content = '';
 	protected ?string $absoluteFilePath = null;
 
+	/**
+	 * @var array<string, mixed>
+	 */
 	private array $globalAttributes = [
 		'backgroundColor' => '',
 		'beforeDoctype' => '',

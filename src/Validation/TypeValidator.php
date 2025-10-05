@@ -9,10 +9,13 @@ class TypeValidator implements Validator
 	/**
 	 * List of named colors.
 	 *
-	 * @var String[]
+	 * @var array<int, string>
 	 */
 	private array $namedColors = ['aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque', 'black', 'blanchedalmond', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'cornsilk', 'crimson', 'cyan', 'darkblue', 'darkcyan', 'darkgoldenrod', 'darkgray', 'darkgreen', 'darkgrey', 'darkkhaki', 'darkmagenta', 'darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen', 'darkslateblue', 'darkslategray', 'darkslategrey', 'darkturquoise', 'darkviolet', 'deeppink', 'deepskyblue', 'dimgray', 'dimgrey', 'dodgerblue', 'firebrick', 'floralwhite', 'forestgreen', 'fuchsia', 'gainsboro', 'ghostwhite', 'gold', 'goldenrod', 'gray', 'green', 'greenyellow', 'grey', 'honeydew', 'hotpink', 'indianred', 'indigo', 'inherit', 'ivory', 'khaki', 'lavender', 'lavenderblush', 'lawngreen', 'lemonchiffon', 'lightblue', 'lightcoral', 'lightcyan', 'lightgoldenrodyellow', 'lightgray', 'lightgreen', 'lightgrey', 'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue', 'lightslategray', 'lightslategrey', 'lightsteelblue', 'lightyellow', 'lime', 'limegreen', 'linen', 'magenta', 'maroon', 'mediumaquamarine', 'mediumblue', 'mediumorchid', 'mediumpurple', 'mediumseagreen', 'mediumslateblue', 'mediumspringgreen', 'mediumturquoise', 'mediumvioletred', 'midnightblue', 'mintcream', 'mistyrose', 'moccasin', 'navajowhite', 'navy', 'oldlace', 'olive', 'olivedrab', 'orange', 'orangered', 'orchid', 'palegoldenrod', 'palegreen', 'paleturquoise', 'palevioletred', 'papayawhip', 'peachpuff', 'peru', 'pink', 'plum', 'powderblue', 'purple', 'rebeccapurple', 'red', 'rosybrown', 'royalblue', 'saddlebrown', 'salmon', 'sandybrown', 'seagreen', 'seashell', 'sienna', 'silver', 'skyblue', 'slateblue', 'slategray', 'slategrey', 'snow', 'springgreen', 'steelblue', 'tan', 'teal', 'thistle', 'tomato', 'transparent', 'turquoise', 'violet', 'wheat', 'white', 'whitesmoke', 'yellow', 'yellowgreen', 'none']; // phpcs:ignore Generic.Files.LineLength
 
+	/**
+	 * @var array<string, bool>
+	 */
 	private array $allowedAlignment = [
 		'left' => true,
 		'right' => true,
@@ -22,6 +25,9 @@ class TypeValidator implements Validator
 		'inherit' => true,
 	];
 
+	/**
+	 * @var array<string, bool>
+	 */
 	private array $allowedFontStyle = [
 		'normal' => true,
 		'italic' => true,
@@ -30,6 +36,9 @@ class TypeValidator implements Validator
 		'inherit' => true,
 	];
 
+	/**
+	 * @var array<string, bool>
+	 */
 	private array $allowedTextDecoration = [
 		'solid' => true,
 		'double' => true,
@@ -40,6 +49,9 @@ class TypeValidator implements Validator
 		'inherit' => true,
 	];
 
+	/**
+	 * @var array<string, bool>
+	 */
 	private array $allowedTextTransform = [
 		'none' => true,
 		'capitalize' => true,
