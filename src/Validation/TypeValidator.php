@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MadeByDenis\PhpMjmlRenderer\Validation;
 
+use InvalidArgumentException;
+
 class TypeValidator implements Validator
 {
 	/**
@@ -150,17 +152,7 @@ class TypeValidator implements Validator
 		return isset($this->allowedAlignment[$value]);
 	}
 
-	/**
-	 * Check if the value is a string.
-	 *
-	 * This check is really not needed, but it's here for consistency.
-	 * The strict type check will take care of this even before we get here, probably.
-	 *
-	 * @param string $value
-	 *
-	 * @return bool
-	 */
-	public function isString(string $value): bool
+	public function isString(mixed $value): bool
 	{
 		return is_string($value);
 	}
@@ -190,11 +182,19 @@ class TypeValidator implements Validator
 		$validatorClassName = __NAMESPACE__ . '\\Validators\\' . ucwords($validatorType) . 'Validator';
 
 		if (!class_exists($validatorClassName)) {
-			throw new \InvalidArgumentException(
+			throw new InvalidArgumentException(
 				"Validator class $validatorClassName does not exist."
 			);
 		}
 
-		return new $validatorClassName($this);
+		$validator = new $validatorClassName($this);
+
+		if (!$validator instanceof Validatable) {
+			throw new InvalidArgumentException(
+				"Validator class $validatorClassName must implement Validatable interface."
+			);
+		}
+
+		return $validator;
 	}
 }
