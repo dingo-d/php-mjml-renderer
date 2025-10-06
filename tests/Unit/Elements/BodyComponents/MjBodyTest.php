@@ -34,7 +34,7 @@ it('will throw out of bounds exception if the allowed attribute property is not 
 	$this->element->getAllowedAttributeData('colour')['name'];
 })->expectException(\OutOfBoundsException::class);
 
-it('Will correctly render the desired element', function () {
+it('will correctly render the desired element', function () {
 	$bodyNode = new MjmlNode(
 		'mj-body',
 		null,
