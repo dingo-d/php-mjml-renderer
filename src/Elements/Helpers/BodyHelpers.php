@@ -6,7 +6,7 @@ namespace MadeByDenis\PhpMjmlRenderer\Elements\Helpers;
 
 trait BodyHelpers
 {
-	protected function addMediaQuery($className, $parsedWidth, $unit): void
+	protected function addMediaQuery(string $className, string $parsedWidth, string $unit): void
 	{
 		$this->setGlobalAttributes('mediaQueries', [
 			$className => [
@@ -16,19 +16,19 @@ trait BodyHelpers
 		]);
 	}
 
-	protected function setBackgroundColor($color): void
+	protected function setBackgroundColor(?string $color): void
 	{
 		$this->setGlobalAttributes('backgroundColor', $color);
 	}
 
-	protected function addHeadStyle($identifier, $headStyle): void
+	protected function addHeadStyle(string $identifier, ?string $headStyle): void
 	{
 		$this->setGlobalAttributes('headStyle', [
 			$identifier => $headStyle
 		]);
 	}
 
-	protected function addComponentHeadStyle($headStyle): void
+	protected function addComponentHeadStyle(?string $headStyle): void
 	{
 		$this->setGlobalAttributes('componentsHeadStyle', $headStyle);
 	}

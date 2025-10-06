@@ -27,9 +27,9 @@ class MjColumn extends AbstractElement
 {
 	use ConditionalTag;
 
-	public const TAG_NAME = 'mj-column';
+	public const string TAG_NAME = 'mj-column';
 
-	public const ENDING_TAG = false;
+	public const bool ENDING_TAG = false;
 
 	/**
 	 * List of allowed attributes on the element

@@ -6,7 +6,7 @@ namespace MadeByDenis\PhpMjmlRenderer\Elements\Helpers;
 
 trait CssClasses
 {
-	public function suffixCssClasses($classes, $suffix): string
+	public function suffixCssClasses(string $classes, string $suffix): string
 	{
 		return $classes ?
 			implode(' ', array_map(function ($className) use ($suffix) {
