@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace MadeByDenis\PhpMjmlRenderer\Renderer;
 
+use InvalidArgumentException;
 use MadeByDenis\PhpMjmlRenderer\Elements\ElementFactory;
+use MadeByDenis\PhpMjmlRenderer\Node;
 use MadeByDenis\PhpMjmlRenderer\ParserFactory;
 use MadeByDenis\PhpMjmlRenderer\Renderer;
 
@@ -35,7 +37,7 @@ class MjmlRenderer implements Renderer
 
 		$parsedContent = $parser->parse($content);
 
-		$contentRender = function ($nodeElement, $content) use (&$contentRender) {
+		$contentRender = function (Node $nodeElement, string $content) use (&$contentRender) {
 			if (!$nodeElement->hasChildren()) {
 				$content .= ElementFactory::create($nodeElement)->render();
 

@@ -61,9 +61,11 @@ interface Node
 	/**
 	 * Get children of the current node element
 	 *
-	 * Returns an array of node elements, or null, in the case there are no children in the current node.
+	 * Returns an array of node elements, or empty array, in the case there are no children in the current node.
 	 *
-	 * @return Node[]|null
+	 * @return Node[]
 	 */
-	public function getChildren(): ?array;
+	public function getChildren(): array;
+
+	public function hasChildren(): bool;
 }
