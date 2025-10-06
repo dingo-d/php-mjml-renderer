@@ -26,9 +26,9 @@ class MjText extends AbstractElement
 {
 	use ConditionalTag;
 
-	public const TAG_NAME = 'mj-text';
+	public const string TAG_NAME = 'mj-text';
 
-	public const ENDING_TAG = true;
+	public const bool ENDING_TAG = true;
 
 	/**
 	 * List of allowed attributes on the element

@@ -10,10 +10,14 @@ trait JsonHelper
 {
 	public function jsonToXML(?Node $node): string
 	{
-		$tagName = $node->getTag();
-		$attributes = $node->getAttributes();
-		$children = $node->getChildren();
-		$content = $node->getInnerContent();
+		$tagName = $node?->getTag();
+		$attributes = $node?->getAttributes() ?? [];
+		$children = $node?->getChildren();
+		$content = $node?->getInnerContent();
+
+		if ($tagName === null) {
+			return '';
+		}
 
 		$subNode = !empty($children) ? implode("\n", array_map([$this, 'jsonToXML'], $children)) : $content;
 

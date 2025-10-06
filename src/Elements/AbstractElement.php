@@ -192,7 +192,7 @@ abstract class AbstractElement implements Element
 	}
 
 	/**
-	 * @param array<string, string> $attributes
+	 * @param array<int|string, mixed> $attributes
 	 *
 	 * @return string|null
 	 */

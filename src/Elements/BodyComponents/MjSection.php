@@ -26,9 +26,9 @@ class MjSection extends AbstractElement
 {
 	use ConditionalTag;
 
-	public const TAG_NAME = 'mj-section';
+	public const string TAG_NAME = 'mj-section';
 
-	public const ENDING_TAG = false;
+	public const bool ENDING_TAG = false;
 
 	/**
 	 * List of allowed attributes on the element
