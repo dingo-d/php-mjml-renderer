@@ -10,7 +10,7 @@ beforeEach(function () {
     $this->factory = new ElementFactory();
 });
 
-it('Will correctly return class of the desired element', function () {
+it('will correctly return class of the desired element', function () {
 	$textNode = new MjmlNode(
 		'mj-text',
 		[],

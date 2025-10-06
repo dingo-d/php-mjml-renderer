@@ -167,4 +167,4 @@ it('throws error on malformed MJML code', function () {
     </mj-text>
 MJML;
 	$this->parser->parse($mjml);
-})->expectExceptionMessage('Badly formatted MJML code.');
+})->throws('Badly formatted MJML code.');
