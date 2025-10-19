@@ -91,7 +91,7 @@ abstract class AbstractElement implements Element
 	];
 
 	/**
-	 * @param array<string, string>|null $attributes
+	 * @param array<string, mixed>|null $attributes
 	 * @param array<int, \MadeByDenis\PhpMjmlRenderer\Node>|null $childNodes
 	 */
 	public function __construct(?array $attributes = [], string $content = '', ?array $childNodes = [])
@@ -99,7 +99,7 @@ abstract class AbstractElement implements Element
 		$this->attributes = $this->formatAttributes(
 			$this->defaultAttributes,
 			$this->allowedAttributes,
-			$attributes ?? [],
+			$attributes,
 		);
 
 		$this->content = $content;
@@ -185,6 +185,9 @@ abstract class AbstractElement implements Element
 
 	// To-do: Override the globally set attributes if we override some from the CLI or some options.
 
+	/**
+	 * @return array<int, \MadeByDenis\PhpMjmlRenderer\Node>|null
+	 */
 	protected function getChildren(): ?array
 	{
 		return $this->children;
@@ -237,7 +240,10 @@ abstract class AbstractElement implements Element
 
 	abstract public function getStyles(): array;
 
-	protected function styles($styles): string
+	/**
+	 * @param string|array<string, mixed> $styles
+	 */
+	protected function styles(string|array $styles): string
 	{
 		$stylesArray = [];
 
@@ -264,7 +270,7 @@ abstract class AbstractElement implements Element
 		return trim($styles);
 	}
 
-	protected function getShorthandAttrValue($attribute, $direction): int
+	protected function getShorthandAttrValue(string $attribute, string $direction): int
 	{
 		$mjAttributeDirection = $this->getAttribute("$attribute-$direction");
 		$mjAttribute = $this->getAttribute($attribute);
@@ -280,27 +286,36 @@ abstract class AbstractElement implements Element
 		return $this->shorthandParser($mjAttribute, $direction);
 	}
 
-	protected function getShorthandBorderValue($direction, $attribute = 'border'): int
+	protected function getShorthandBorderValue(string $direction, string $attribute = 'border'): int
 	{
-		$borderDirection = $direction && $this->getAttribute("$attribute-$direction");
+		$borderDirection = $this->getAttribute("$attribute-$direction");
 		$border = $this->getAttribute($attribute);
 
-		return $this->borderParser($borderDirection || $border || '0');
+		return $this->borderParser($borderDirection ?: ($border ?: '0'));
 	}
 
-	protected function renderChildren($children, $options = []): string
+	/**
+	 * Render children elements
+	 *
+	 * @param array<int, \MadeByDenis\PhpMjmlRenderer\Node> $children
+	 * @param array<string, mixed> $options
+	 *
+	 * @throws \Exception
+	 * @return string
+	 */
+	protected function renderChildren(array $children, array $options = []): string
 	{
-		$children = $children ?? $this->children;
+		$children = $children ?: $this->children;
 
 		if ($this->isRawElement()) {
 			return implode("\n", array_map(function ($child) {
 				return $this->jsonToXML($child);
-			}, $children));
+			}, $children ?? []));
 		}
 
 		$output = '';
 
-		foreach ($children as $child) {
+		foreach ($children ?? [] as $child) {
 			// Render child components.
 			$output .= ElementFactory::create($child)->render();
 		}
@@ -308,6 +323,9 @@ abstract class AbstractElement implements Element
 		return $output;
 	}
 
+	/**
+	 * @return array<string, int>
+	 */
 	protected function getBoxWidths(): array
 	{
 
@@ -316,11 +334,11 @@ abstract class AbstractElement implements Element
 		$parsedWidth = (int)$containerWidth;
 
 		$paddings =
-			$this->getShorthandAttrValue('padding', 'right') .
+			$this->getShorthandAttrValue('padding', 'right') +
 			$this->getShorthandAttrValue('padding', 'left');
 
 		$borders =
-			$this->getShorthandBorderValue('right') .
+			$this->getShorthandBorderValue('right') +
 			$this->getShorthandBorderValue('left');
 
 		return [
@@ -331,7 +349,12 @@ abstract class AbstractElement implements Element
 		];
 	}
 
-	protected function widthParser($width, $options = []): array
+	/**
+	 * @param string|int|float $width
+	 * @param array<string, mixed> $options
+	 * @return array<string, string|int|float>
+	 */
+	protected function widthParser(string|int|float $width, array $options = []): array
 	{
 		$defaultOptions = [
 			'parseFloatToInt' => true,
@@ -339,7 +362,7 @@ abstract class AbstractElement implements Element
 
 		$options = $defaultOptions + $options;
 
-		$widthUnit = preg_match('/[\d.,]*(\D*)$/', $width, $matches) ? $matches[1] : 'px';
+		$widthUnit = preg_match('/[\d.,]*(\D*)$/', (string)$width, $matches) ? $matches[1] : 'px';
 
 		$unitParsers = [
 			'default' => 'intval',
@@ -358,13 +381,13 @@ abstract class AbstractElement implements Element
 	/**
 	 * @param array<string, string> $defaultAttributes
 	 * @param array<string, array<string, string>> $allowedAttributes
-	 * @param array<string, string> $passedAttributes
+	 * @param array<string, mixed>|null $passedAttributes
 	 * @return array<string, string>
 	 */
 	private function formatAttributes(
 		array $defaultAttributes,
 		array $allowedAttributes,
-		array $passedAttributes = []
+		?array $passedAttributes = []
 	): array {
 		/*
 		 * Check if the attributes are of the proper format based on the allowed attributes.
@@ -422,10 +445,14 @@ abstract class AbstractElement implements Element
 		return $result + $defaultAttributes;
 	}
 
-	private function shortHandParser($cssValue, $direction): int
+	private function shortHandParser(string $cssValue, string $direction): int
 	{
 		// Convert to PHP.
 		$splittedCssValue = preg_split('/\s+/', trim($cssValue), 4);
+
+		if ($splittedCssValue === false || count($splittedCssValue) === 0) {
+			return 0;
+		}
 
 		switch (count($splittedCssValue)) {
 			case 2:
@@ -442,10 +469,10 @@ abstract class AbstractElement implements Element
 				return (int)$cssValue;
 		}
 
-		return (int)$splittedCssValue[$directions[$direction]] ?? 0;
+		return (int)($splittedCssValue[$directions[$direction]] ?? 0);
 	}
 
-	private function borderParser($border): int
+	private function borderParser(string $border): int
 	{
 		preg_match('/(?:^| )(\d+)/', $border, $matches);
 		return isset($matches[1]) ? (int)$matches[1] : 0;

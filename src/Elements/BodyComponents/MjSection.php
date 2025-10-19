@@ -191,6 +191,11 @@ class MjSection extends AbstractElement
 		return $this->isFullWidth() ? $this->renderFullWidth() : $this->renderSimple();
 	}
 
+	/**
+	 * Gets the context for child elements.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public function getChildContext(): array
 	{
 		return [
@@ -200,7 +205,7 @@ class MjSection extends AbstractElement
 	}
 
 	/**
-	 * @return array<string, array<string, string>>
+	 * @return array<string, array<string, mixed>>
 	 */
 	public function getStyles(): array
 	{
@@ -298,7 +303,7 @@ class MjSection extends AbstractElement
 		</table>";
 	}
 
-	private function renderSimple(): ?string
+	private function renderSimple(): string
 	{
 		$section = $this->renderSection();
 
@@ -337,7 +342,7 @@ class MjSection extends AbstractElement
 		$bgWrapperCloser = $hasBackground ? '</div>' : '';
 
 		// Get child nodes.
-		$children = $this->getChildren();
+		$children = $this->getChildren() ?? [];
 		$content = $this->renderWrappedChildren($children);
 
 		return "
@@ -400,7 +405,15 @@ class MjSection extends AbstractElement
 		<![endif]-->";
 	}
 
-	private function renderWrappedChildren(?array $children): string
+	/**
+	 * Renders children wrapped in conditional tags for Outlook/IE.
+	 *
+	 * @param array<int, \MadeByDenis\PhpMjmlRenderer\Node> $children Child elements to render.
+	 *
+	 * @throws \Exception
+	 * @return string
+	 */
+	private function renderWrappedChildren(array $children): string
 	{
 		$content = $this->renderChildren($children, []);
 
@@ -437,7 +450,7 @@ class MjSection extends AbstractElement
 		<![endif]-->";
 	}
 
-	private function renderWithBackground($content): string
+	private function renderWithBackground(string $content): string
 	{
 		$fullWidth = $this->isFullWidth();
 		['containerWidth' => $containerWidth] = $this->getChildContext();
@@ -584,18 +597,16 @@ class MjSection extends AbstractElement
 		$bgUrl = $this->getAttribute('background-url');
 		$bgSize = $this->getAttribute('background-size');
 
-		return $this->makeBackgroundString([
-			$this->getAttribute('background-color'),
-			...[
-				$this->hasBackground() ?
-					[
-						"url('$bgUrl')",
-						$this->getBackgroundString(),
-						"/ $bgSize",
-						$this->getAttribute('background-repeat'),
-					] : []
-			]
-		]);
+		$backgroundParts = [$this->getAttribute('background-color')];
+
+		if ($this->hasBackground()) {
+			$backgroundParts[] = "url('$bgUrl')";
+			$backgroundParts[] = $this->getBackgroundString();
+			$backgroundParts[] = "/ $bgSize";
+			$backgroundParts[] = $this->getAttribute('background-repeat');
+		}
+
+		return $this->makeBackgroundString($backgroundParts);
 	}
 
 	private function getBackgroundString(): string
@@ -605,6 +616,11 @@ class MjSection extends AbstractElement
 		return "$posX $posY";
 	}
 
+	/**
+	 * Gets the background position x and y values, considering individual overrides.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function getBackgroundPosition(): array
 	{
 		['x' => $x, 'y' => $y] = $this->parseBackgroundPosition();
@@ -615,6 +631,11 @@ class MjSection extends AbstractElement
 		];
 	}
 
+	/**
+	 * Parses the background-position attribute into x and y components.
+	 *
+	 * @return array<string, string>
+	 */
 	private function parseBackgroundPosition(): array
 	{
 		$posSplit = explode(' ', $this->getAttribute('background-position'));
@@ -662,6 +683,9 @@ class MjSection extends AbstractElement
 		];
 	}
 
+	/**
+	 * @param array<int|string, string> $array Array of background properties.
+	 */
 	private function makeBackgroundString(array $array): string
 	{
 		return implode(' ', array_filter($array));

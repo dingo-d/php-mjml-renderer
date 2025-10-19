@@ -71,7 +71,7 @@ class MjBody extends AbstractElement
 			$dir,
 		]);
 
-		$children = $this->getChildren();
+		$children = $this->getChildren() ?? [];
 
 		$content = $this->renderChildren($children);
 

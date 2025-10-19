@@ -25,4 +25,6 @@ interface Element
 	 * @return array<string, array<string, mixed>>
 	 */
 	public function getStyles(): array;
+
+	public function isRawElement(): bool;
 }
