@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace MadeByDenis\PhpMjmlRenderer\Elements;
 
+use Exception;
 use MadeByDenis\PhpMjmlRenderer\Node;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -27,6 +28,9 @@ final class ElementFactory
 
 	private static Node $node;
 
+	/**
+	 * @throws Exception
+	 */
 	public static function create(Node $node): Element
 	{
 		self::$node = $node;
@@ -35,9 +39,20 @@ final class ElementFactory
 		$class = self::getTagClass($tag);
 		$attributes = $node->getAttributes();
 		$content = $node->getInnerContent() ?? '';
-		$children = $node->getChildren() ?? [];
+		$children = $node->getChildren();
 
-		return new $class($attributes, $content, $children); // phpcs:ignore PSR12.Classes.ClassInstantiation.MissingParentheses
+		$element = new $class($attributes, $content, $children);
+
+		if (!$element instanceof Element) {
+			throw new Exception(
+				sprintf(
+					'Element must be an instance of Element. %s returned.',
+					gettype($element)
+				)
+			);
+		}
+
+		return $element;
 	}
 
 	private static function getTagClass(string $tag): string

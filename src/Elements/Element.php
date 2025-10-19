@@ -20,5 +20,11 @@ namespace MadeByDenis\PhpMjmlRenderer\Elements;
 interface Element
 {
 	public function render(): string;
+
+	/**
+	 * @return array<string, array<string, mixed>>
+	 */
 	public function getStyles(): array;
+
+	public function isRawElement(): bool;
 }

@@ -26,9 +26,9 @@ class MjBody extends AbstractElement
 {
 	use ConditionalTag;
 
-	public const TAG_NAME = 'mj-body';
+	public const string TAG_NAME = 'mj-body';
 
-	public const ENDING_TAG = false;
+	public const bool ENDING_TAG = false;
 
 	/**
 	 * List of allowed attributes on the element
@@ -71,7 +71,7 @@ class MjBody extends AbstractElement
 			$dir,
 		]);
 
-		$children = $this->getChildren();
+		$children = $this->getChildren() ?? [];
 
 		$content = $this->renderChildren($children);
 

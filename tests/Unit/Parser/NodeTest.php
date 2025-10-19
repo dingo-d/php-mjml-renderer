@@ -41,8 +41,8 @@ it('will return attribute value', function() {
 	expect($this->node->getAttributeValue('mj-class'))->toBe('blue big');
 });
 
-it('will return null if there are no children nodes', function() {
-	expect($this->node->getChildren())->toBeNull();
+it('will return empty array if there are no children nodes', function() {
+	expect($this->node->getChildren())->toBeEmpty();
 });
 
 it('will return the children nodes', function() {

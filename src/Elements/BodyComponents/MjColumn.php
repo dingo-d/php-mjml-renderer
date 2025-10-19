@@ -27,9 +27,9 @@ class MjColumn extends AbstractElement
 {
 	use ConditionalTag;
 
-	public const TAG_NAME = 'mj-column';
+	public const string TAG_NAME = 'mj-column';
 
-	public const ENDING_TAG = false;
+	public const bool ENDING_TAG = false;
 
 	/**
 	 * List of allowed attributes on the element
@@ -202,11 +202,14 @@ class MjColumn extends AbstractElement
 	{
 		['containerWidth' => $parentWidth] = $this->context;
 
-		$nonRawSiblings = count(array_filter($this->getChildren(), function ($child) {
-			return !$child->isRawElement();
+		$children = $this->getChildren() ?? [];
+		$nonRawSiblings = count(array_filter($children, function ($child) {
+			// Check if the child is a raw element by creating the element and checking
+			$element = ElementFactory::create($child);
+			return !$element->isRawElement();
 		}));
 
-		$innerBorders = $this->getShorthandBorderValue('left', 'inner-border') . $this->getShorthandBorderValue(
+		$innerBorders = $this->getShorthandBorderValue('left', 'inner-border') + $this->getShorthandBorderValue(
 			'right',
 			'inner-border'
 		);
@@ -216,16 +219,16 @@ class MjColumn extends AbstractElement
 
 		['borders' => $borders, 'paddings' => $paddings]  = $this->getBoxWidths();
 
-		$allPaddings = $paddings . $borders . $innerBorders;
+		$allPaddings = $paddings + $borders + $innerBorders;
 
 		['unit' => $unit, 'parsedWidth' => $parsedWidth] = $this->widthParser($containerWidth, [
 			'parseFloatToInt' => false,
 		]);
 
 		if ($unit === '%') {
-			$width = ((float)$parentWidth * $parsedWidth) / 100 - $allPaddings;
+			$width = ((float)$parentWidth * (float)$parsedWidth) / 100 - $allPaddings;
 		} else {
-			$width = $parsedWidth - $allPaddings;
+			$width = (float)$parsedWidth - $allPaddings;
 		}
 
 		$containerWidth = "{$width}px";
@@ -319,7 +322,7 @@ class MjColumn extends AbstractElement
 	private function renderColumn(): string
 	{
 
-		$children = $this->getChildren();
+		$children = $this->getChildren() ?? [];
 
 		$tableAttributes = $this->getHtmlAttributes([
 			'border' => '0',
@@ -371,8 +374,9 @@ class MjColumn extends AbstractElement
 //          })}
 	}
 
-	private function getMobileWidth()
+	private function getMobileWidth(): string
 	{
+		return '100%';
 //		const { containerWidth } = this.context
 //		const { nonRawSiblings } = this.props
 //		const width = this.getAttribute('width')
@@ -402,12 +406,17 @@ class MjColumn extends AbstractElement
 	{
 		['containerWidth' => $containerWidth] = $this->context;
 
-		[$unit, $parsedWidth] = $this->widthParser($this->getParsedWidth(true), [
+		$widthString = $this->getParsedWidth(true);
+		if (!is_string($widthString)) {
+			throw new \RuntimeException('getParsedWidth with toString=true must return a string');
+		}
+
+		['unit' => $unit, 'parsedWidth' => $parsedWidth] = $this->widthParser($widthString, [
 			'parseFloatToInt' => false,
 		]);
 
 		if ($unit === '%') {
-			$pixelValue = ((float)$containerWidth * $parsedWidth) / 100;
+			$pixelValue = ((float)$containerWidth * (float)$parsedWidth) / 100;
 
 			return "{$pixelValue}px";
 		}
@@ -415,9 +424,13 @@ class MjColumn extends AbstractElement
 		return "{$parsedWidth}px";
 	}
 
+	/**
+	 * @return array<int, string|int|float>|string
+	 */
 	private function getParsedWidth(bool $toString = false): array | string
 	{
-		$nonRawSiblings = count(array_filter($this->getChildren(), function ($child) {
+		$children = $this->getChildren() ?? [];
+		$nonRawSiblings = count(array_filter($children, function ($child) {
 			// Get the element from the node, then check if it's raw.
 			$element = ElementFactory::create($child);
 			return !$element->isRawElement();
@@ -443,16 +456,20 @@ class MjColumn extends AbstractElement
 
 	private function getColumnClass(): string
 	{
-		[$unit, $parsedWidth] = $this->getParsedWidth();
+		$parsedWidthResult = $this->getParsedWidth();
+		if (!is_array($parsedWidthResult)) {
+			throw new \RuntimeException('getParsedWidth must return an array when toString is false');
+		}
+		[$unit, $parsedWidth] = $parsedWidthResult;
 
 		$formattedClassNb = str_replace('.', '-', (string)$parsedWidth);
 
-		$className = match ($unit) {
+		$className = match ((string)$unit) {
 			'%' => "mj-column-per-$formattedClassNb",
 			default => "mj-column-px-$formattedClassNb",
 		};
 
-		$this->addMediaQuery($className, $parsedWidth, $unit);
+		$this->addMediaQuery($className, (string)$parsedWidth, (string)$unit);
 
 		return $className;
 	}

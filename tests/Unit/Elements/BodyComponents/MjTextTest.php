@@ -5,6 +5,7 @@ namespace MadeByDenis\PhpMjmlRenderer\Tests\Unit\Renderer;
 use MadeByDenis\PhpMjmlRenderer\Elements\BodyComponents\MjText;
 use MadeByDenis\PhpMjmlRenderer\Elements\ElementFactory;
 use MadeByDenis\PhpMjmlRenderer\Parser\MjmlNode;
+use OutOfBoundsException;
 
 beforeEach(function () {
     $this->element = new MjText();
@@ -27,13 +28,13 @@ it('returns the correct default attribute', function () {
 
 it('will throw out of bounds exception if the allowed attribute is not existing', function () {
 	$this->element->getAllowedAttributeData('colour');
-})->expectException(\OutOfBoundsException::class);
+})->throws(OutOfBoundsException::class);
 
 it('will throw out of bounds exception if the allowed attribute property is not existing', function () {
 	$this->element->getAllowedAttributeData('colour')['name'];
-})->expectException(\OutOfBoundsException::class);
+})->throws(OutOfBoundsException::class);
 
-it('Will correctly render the desired element', function () {
+it('will correctly render the desired element', function () {
 	$textNode = new MjmlNode(
 		'mj-text',
 		[],
@@ -53,7 +54,7 @@ it('Will correctly render the desired element', function () {
 	expect($out)->toBe('<div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#000000;">Hello World!</div>');
 });
 
-it('Will correctly render the desired element with overridden attributes', function () {
+it('will correctly render the desired element with overridden attributes', function () {
 	$textNode = new MjmlNode(
 		'mj-text',
 		[
@@ -75,7 +76,7 @@ it('Will correctly render the desired element with overridden attributes', funct
 	expect($out)->toBe('<div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#FF0000;">Hello World!</div>');
 });
 
-it('Will correctly throw exception if we are passing a non-existing type', function () {
+it('will correctly throw exception if we are passing a non-existing type', function () {
 	$textNode = new MjmlNode(
 		'mj-text',
 		[

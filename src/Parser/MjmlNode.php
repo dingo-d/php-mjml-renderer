@@ -83,11 +83,11 @@ final class MjmlNode implements Node
 	}
 
 	/**
-	 * @return Node[]|null
+	 * @return Node[]
 	 */
-	public function getChildren(): ?array
+	public function getChildren(): array
 	{
-		return $this->children;
+		return $this->children ?? [];
 	}
 
 	/**

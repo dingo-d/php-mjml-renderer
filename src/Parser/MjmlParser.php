@@ -14,6 +14,10 @@ namespace MadeByDenis\PhpMjmlRenderer\Parser;
 
 use MadeByDenis\PhpMjmlRenderer\Node;
 use MadeByDenis\PhpMjmlRenderer\Parser;
+use RuntimeException;
+use SimpleXMLElement;
+
+use function simplexml_load_string;
 
 /**
  * MJML Parser
@@ -26,28 +30,25 @@ final class MjmlParser implements Parser
 {
 	public function parse(string $sourceCode): Node
 	{
-		// Parse the code.
-		try {
-			$simpleXmlElement = \simplexml_load_string($sourceCode);
-		} catch (\Exception $exception) {
-			throw new \RuntimeException($exception->getMessage());
-		}
+		libxml_use_internal_errors(true);
+		$simpleXmlElement = simplexml_load_string($sourceCode);
 
 		// Validate the source code.
 		if ($simpleXmlElement === false) {
-			throw new \RuntimeException('Badly formatted MJML code.');
+			libxml_clear_errors();
+			throw new RuntimeException('Badly formatted MJML code.');
 		}
 
-		$parser = function (
-			\SimpleXMLElement $element,
-			?Node $parentNode = null,
-			?array $children = []
-		) use (&$parser) {
-			$attributes = $element->attributes();
+		libxml_use_internal_errors(false);
 
+		$parser = function (
+			SimpleXMLElement $element,
+			?Node $parentNode = null,
+			array $children = []
+		) use (&$parser) {
 			$parentNode = new MjmlNode(
 				$element->getName(),
-				!empty($attributes) ? ((array)$attributes)['@attributes'] : null,
+				$this->getAttributesArray($element->attributes()),
 				null,
 				false,
 				null
@@ -59,15 +60,19 @@ final class MjmlParser implements Parser
 			}
 
 			foreach ($element as $nodeName => $nodeContent) {
-				$parentAttributes = $element->attributes();
-
 				$innerParentNode = new MjmlNode(
 					$nodeName,
-					!empty($parentAttributes) ? ((array)$parentAttributes)['@attributes'] : null,
+					$this->getAttributesArray($element->attributes()),
 					null,
 					false,
 					null
 				);
+
+				if (!isset($children[$nodeName])) {
+					$children[$nodeName] = [];
+				}
+
+				assert(is_array($children[$nodeName]));
 
 				if (count($nodeContent->children()) < 2) {
 					$children[$nodeName][] = $parser($nodeContent, $innerParentNode);
@@ -77,9 +82,11 @@ final class MjmlParser implements Parser
 				$children[$nodeName][] = $parser($nodeContent, $innerParentNode);
 			}
 
-			unset($parentAttributes, $innerParentNode, $nodeName, $nodeContent);
+			unset($innerParentNode, $nodeName, $nodeContent);
 
-			$childrenFiltered = array_merge(...array_values($children ?? []));
+			/** @var array<int, array<int, Node>> $childrenValues */
+			$childrenValues = array_values($children);
+			$childrenFiltered = array_merge(...$childrenValues);
 
 			$parentNode->setChildren($childrenFiltered);
 
@@ -89,12 +96,12 @@ final class MjmlParser implements Parser
 		return $parser($simpleXmlElement);
 	}
 
-	private function parseSingleElement(\SimpleXMLElement $element): Node
+	private function parseSingleElement(SimpleXMLElement $element): Node
 	{
 		$attributes = $element->attributes();
 		$xml = $element->asXML();
 
-		if (!empty($xml) && strpos($xml, '/>') !== false) {
+		if (!empty($xml) && str_contains($xml, '/>')) {
 			$isSelfClosing = true;
 			$value = null;
 		} else {
@@ -104,10 +111,35 @@ final class MjmlParser implements Parser
 
 		return new MjmlNode(
 			$element->getName(),
-			!empty($attributes) ? ((array)$attributes)['@attributes'] : null,
+			$this->getAttributesArray($element->attributes()),
 			$value,
 			$isSelfClosing,
 			null
 		);
+	}
+
+	/**
+	 * Converts SimpleXMLElement attributes to an associative array
+	 *
+	 * @param ?object $attributes The attributes object from SimpleXMLElement.
+	 *
+	 * @return ?array<string, string> Associative array of attributes or null if no attributes exist.
+	 */
+	private function getAttributesArray(?object $attributes): ?array
+	{
+		if ($attributes === null || count((array)$attributes) === 0) {
+			return null;
+		}
+
+		$attributesArray = (array)$attributes;
+
+		if (!isset($attributesArray['@attributes'])) {
+			return null;
+		}
+
+		/** @var array<string, string> $result */
+		$result = $attributesArray['@attributes'];
+
+		return $result;
 	}
 }
