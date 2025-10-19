@@ -5,6 +5,7 @@ namespace MadeByDenis\PhpMjmlRenderer\Tests\Unit\Renderer;
 use MadeByDenis\PhpMjmlRenderer\Elements\BodyComponents\MjText;
 use MadeByDenis\PhpMjmlRenderer\Elements\ElementFactory;
 use MadeByDenis\PhpMjmlRenderer\Parser\MjmlNode;
+use OutOfBoundsException;
 
 beforeEach(function () {
     $this->element = new MjText();
@@ -27,11 +28,11 @@ it('returns the correct default attribute', function () {
 
 it('will throw out of bounds exception if the allowed attribute is not existing', function () {
 	$this->element->getAllowedAttributeData('colour');
-})->expectException(\OutOfBoundsException::class);
+})->throws(OutOfBoundsException::class);
 
 it('will throw out of bounds exception if the allowed attribute property is not existing', function () {
 	$this->element->getAllowedAttributeData('colour')['name'];
-})->expectException(\OutOfBoundsException::class);
+})->throws(OutOfBoundsException::class);
 
 it('will correctly render the desired element', function () {
 	$textNode = new MjmlNode(
