@@ -214,7 +214,7 @@ class MjColumn extends AbstractElement
 			'inner-border'
 		);
 
-		$containerWidth = (float)$parentWidth / $nonRawSiblings;
+		$containerWidth = $nonRawSiblings > 0 ? (float)$parentWidth / $nonRawSiblings : (float)$parentWidth;
 		$containerWidth = $this->getAttribute('width') ?? "{$containerWidth}px";
 
 		['borders' => $borders, 'paddings' => $paddings]  = $this->getBoxWidths();
@@ -436,7 +436,7 @@ class MjColumn extends AbstractElement
 			return !$element->isRawElement();
 		}));
 
-		$percentage = 100 / $nonRawSiblings;
+		$percentage = $nonRawSiblings > 0 ? 100 / $nonRawSiblings : 100;
 
 		$width = $this->getAttribute('width') ?? "$percentage%";
 
