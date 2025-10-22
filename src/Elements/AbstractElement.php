@@ -160,6 +160,17 @@ abstract class AbstractElement implements Element
 	}
 
 	/**
+	 * Set the rendering context for this element
+	 *
+	 * @param array<string, mixed> $context
+	 * @return void
+	 */
+	public function setContext(array $context): void
+	{
+		$this->context = $context;
+	}
+
+	/**
 	 * @param string $attributeName
 	 * @return mixed|null
 	 */
@@ -315,9 +326,12 @@ abstract class AbstractElement implements Element
 
 		$output = '';
 
+		// Get the child context from this element
+		$childContext = $this->getChildContext();
+
 		foreach ($children ?? [] as $child) {
-			// Render child components.
-			$output .= ElementFactory::create($child)->render();
+			// Render child components with the parent's child context
+			$output .= ElementFactory::create($child, $childContext)->render();
 		}
 
 		return $output;

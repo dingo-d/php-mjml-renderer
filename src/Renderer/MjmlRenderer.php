@@ -37,24 +37,8 @@ class MjmlRenderer implements Renderer
 
 		$parsedContent = $parser->parse($content);
 
-		$contentRender = function (Node $nodeElement, string $content) use (&$contentRender) {
-			if (!$nodeElement->hasChildren()) {
-				$content .= ElementFactory::create($nodeElement)->render();
-
-				return $content;
-			}
-
-			foreach ($nodeElement->getChildren() as $childNode) {
-				if ($childNode->hasChildren()) {
-					$contentRender($childNode, $content);
-				} else {
-					$content .= ElementFactory::create($childNode)->render();
-				}
-			}
-
-			return $content;
-		};
-
-		return $contentRender($parsedContent, '');
+		// Create the root element and render it.
+		// Each element handles rendering its own children via renderChildren().
+		return ElementFactory::create($parsedContent)->render();
 	}
 }

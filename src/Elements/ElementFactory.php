@@ -29,9 +29,10 @@ final class ElementFactory
 	private static Node $node;
 
 	/**
+	 * @param array<string, mixed> $context
 	 * @throws Exception
 	 */
-	public static function create(Node $node): Element
+	public static function create(Node $node, array $context = []): Element
 	{
 		self::$node = $node;
 
@@ -50,6 +51,11 @@ final class ElementFactory
 					gettype($element)
 				)
 			);
+		}
+
+		// Set context on the element
+		if (!empty($context)) {
+			$element->setContext($context);
 		}
 
 		return $element;
