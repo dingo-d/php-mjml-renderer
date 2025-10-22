@@ -47,7 +47,7 @@ HTML;
 	$htmlOut = $this->renderer->render($mjml);
 
 	expect($htmlOut)->toEqual($htmlExpected);
-})->skip();
+})->skip('MjSection rendering needs refactoring to match MJML spec');
 
 it('renders the MJML to correct HTML version with attributes', function () {
 	$mjml = <<<'MJML'

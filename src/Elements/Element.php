@@ -27,4 +27,12 @@ interface Element
 	public function getStyles(): array;
 
 	public function isRawElement(): bool;
+
+	/**
+	 * Set the rendering context for this element
+	 *
+	 * @param array<string, mixed> $context
+	 * @return void
+	 */
+	public function setContext(array $context): void;
 }
