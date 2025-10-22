@@ -222,9 +222,9 @@ abstract class AbstractElement implements Element
 		$attrOut = '';
 
 		array_walk($nonEmpty, function ($val, $key) use (&$attrOut, $specialAttributes) {
-			$value = !empty($specialAttributes[$key]) ?
+			$value = isset($specialAttributes[$key]) ?
 				$specialAttributes[$key] :
-				$specialAttributes['default'];
+				$val;
 
 			if (is_array($value)) {
 				$value = implode('; ', array_map(function ($val, $key) {
@@ -232,7 +232,7 @@ abstract class AbstractElement implements Element
 				}, $value, array_keys($value)));
 			}
 
-			$attrOut .= "$key=\"$value\"";
+			$attrOut .= "$key=\"$value\" ";
 		});
 
 		return trim($attrOut);
