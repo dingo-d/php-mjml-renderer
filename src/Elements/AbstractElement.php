@@ -360,14 +360,16 @@ abstract class AbstractElement implements Element
 			'parseFloatToInt' => true,
 		];
 
-		$options = $defaultOptions + $options;
+		$options = $options + $defaultOptions;
 
 		$widthUnit = preg_match('/[\d.,]*(\D*)$/', (string)$width, $matches) ? $matches[1] : 'px';
+
+		$parseFloatToInt = $options['parseFloatToInt'];
 
 		$unitParsers = [
 			'default' => 'intval',
 			'px' => 'intval',
-			'%' => $options['parseFloatToInt'] ? 'intval' : 'floatval',
+			'%' => $parseFloatToInt ? 'intval' : 'floatval',
 		];
 
 		$parser = $unitParsers[$widthUnit] ?? $unitParsers['default'];
