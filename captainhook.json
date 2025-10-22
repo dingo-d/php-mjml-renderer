@@ -20,7 +20,7 @@
 		"enabled": true,
 		"actions": [
 			{
-				"action": "vendor/bin/pest",
+				"action": "vendor/bin/pest --no-coverage",
 				"options": [],
 				"conditions": []
 			},
