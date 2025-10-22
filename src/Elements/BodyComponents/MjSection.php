@@ -376,12 +376,13 @@ class MjSection extends AbstractElement
 			['bgcolor' => $this->getAttribute('background-color')] :
 			[];
 
+		$cssClass = $this->getAttribute('css-class');
 		$tableAttributes = [
 			'align' => 'center',
 			'border' => '0',
 			'cellpadding' => '0',
 			'cellspacing' => '0',
-			'class' => $this->suffixCssClasses($this->getAttribute('css-class'), 'outlook'),
+			'class' => $cssClass ? $this->suffixCssClasses($cssClass, 'outlook') : '',
 			'role' => 'presentation',
 			'style' => ['width' => $containerWidth],
 			'width' => (int)$containerWidth,
