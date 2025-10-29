@@ -6,18 +6,13 @@ namespace MadeByDenis\PhpMjmlRenderer\Elements\HeadComponents;
 
 use MadeByDenis\PhpMjmlRenderer\Elements\AbstractElement;
 
-class MjBreakpoint extends AbstractElement
+class MjAttributes extends AbstractElement
 {
-	public const string TAG_NAME = 'mj-breakpoint';
+	public const string TAG_NAME = 'mj-attributes';
 	public const bool ENDING_TAG = false;
 
-	protected array $allowedAttributes = [
-		'width' => ['unit' => 'px', 'type' => 'string', 'default_value' => '480px'],
-	];
-
-	protected array $defaultAttributes = [
-		'width' => '480px',
-	];
+	protected array $allowedAttributes = [];
+	protected array $defaultAttributes = [];
 
 	public function render(): string
 	{
