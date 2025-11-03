@@ -50,7 +50,7 @@ This projects adheres to [Semantic Versioning](https://semver.org/) and [Keep a 
 - 340+ unit tests covering all elements
 - 16 end-to-end tests with real-world email templates
 - 7 performance benchmarks
-- PHPStan level 9 static analysis
+- PHPStan level 8 static analysis
 - PSR-12 coding standards compliance
 - Pre-commit hooks via CaptainHook
 
