@@ -1,8 +1,8 @@
 # MJML Renderer for PHP
 
-[![Tests](https://github.com/dingo-d/php-mjml-renderer/workflows/Tests/badge.svg)](https://github.com/dingo-d/php-mjml-renderer/actions)
-[![PHP Version](https://img.shields.io/packagist/php-v/dingo-d/php-mjml-renderer)](https://packagist.org/packages/dingo-d/php-mjml-renderer)
-[![License](https://img.shields.io/packagist/l/dingo-d/php-mjml-renderer)](LICENSE)
+[![CI Checks](https://github.com/dingo-d/php-mjml-renderer/actions/workflows/ci.yml/badge.svg)](https://github.com/dingo-d/php-mjml-renderer/actions/workflows/ci.yml)
+[![PHP Version](https://img.shields.io/packagist/dependency-v/dingo-d/php-mjml-renderer/php.svg)](https://packagist.org/packages/dingo-d/php-mjml-renderer)
+![GitHub License](https://img.shields.io/github/license/dingo-d/php-mjml-renderer)
 
 A pure PHP implementation of the MJML rendering engine. Convert MJML markup to responsive HTML emails without requiring Node.js or external APIs.
 
